@@ -3,7 +3,7 @@ set cpo&vim
 
 function! s:open_window(vcs, type, info)
     let bufname = '__committia_' . a:type . '__'
-    execute g:committia_{a:type}_window_opencmd bufname
+    execute 'silent' g:committia_{a:type}_window_opencmd bufname
     let a:info[a:type . '_winnr'] = bufwinnr(bufname)
     let a:info[a:type . '_bufnr'] = bufnr('%')
     call append(0, call('committia#' . a:vcs . '#' . a:type, []))
@@ -31,6 +31,14 @@ function! s:execute_hook(name, info)
     endif
 endfunction
 
+function! s:remove_all_except_for_commit_message()
+    execute 0
+    call search('^\%(\s*$\|\s*#\)', 'cW')
+    normal! dG
+    execute 0
+    vertical resize 80
+endfunction
+
 function! committia#open(vcs)
     if winwidth(0) < g:committia_min_window_width
         call s:execute_hook('edit_open', {'vcs' : a:vcs})
@@ -46,11 +54,7 @@ function! committia#open(vcs)
     call s:execute_hook('status_open', info)
     wincmd p
 
-    execute 0
-    call search('^\%(\s*$\|\s*#\)', 'cW')
-    normal! dG
-    execute 0
-    vertical resize 80
+    silent call s:remove_all_except_for_commit_message()
     call s:execute_hook('edit_open', info)
 endfunction
 
