@@ -51,7 +51,8 @@ endfunction
 
 - Scroll diff window from insert mode in edit window.
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
-- More VCS supports
+- Add more VCS supports
+- Test all features
 
 ## License
 
