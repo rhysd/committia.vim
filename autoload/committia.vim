@@ -42,5 +42,9 @@ function! committia#open(vcs)
     execute 0
     vertical resize 80
     normal! $
+    setlocal spell
+    if has_key(g:committia_hooks, 'post_open')
+        call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
+    endif
     startinsert!
 endfunction
