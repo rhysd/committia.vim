@@ -46,11 +46,13 @@ function! committia#open(vcs)
     let [diff_winnr, diff_bufnr] = s:open_diff_window(a:vcs)
     let info.diff_winnr = diff_winnr
     let info.diff_bufnr = diff_bufnr
+    call s:execute_hook('diff_open', info)
     wincmd p
 
     let [status_winnr, status_bufnr] = s:open_status_window(a:vcs)
     let info.status_winnr = status_winnr
     let info.status_bufnr = status_bufnr
+    call s:execute_hook('status_open', info)
     wincmd p
 
     execute 0
@@ -58,9 +60,7 @@ function! committia#open(vcs)
     normal! dG
     execute 0
     vertical resize 80
-    if has_key(g:committia_hooks, 'edit_open')
-        call s:execute_hook('edit_open', info)
-    endif
+    call s:execute_hook('edit_open', info)
 endfunction
 
 let &cpo = s:save_cpo
