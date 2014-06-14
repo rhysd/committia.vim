@@ -1,33 +1,28 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:open_window(vcs, type)
+function! s:open_window(vcs, type, info)
     let bufname = '__committia_' . a:type . '__'
     execute g:committia_{a:type}_window_opencmd bufname
-    let winnr = bufwinnr(bufname)
-    let bufnr = bufnr('%')
+    let a:info[a:type . '_winnr'] = bufwinnr(bufname)
+    let a:info[a:type . '_bufnr'] = bufnr('%')
     call append(0, call('committia#' . a:vcs . '#' . a:type, []))
     execute 0
     setlocal nonumber bufhidden=wipe readonly nobuflisted noswapfile nomodifiable nomodified
-
-    return [winnr, bufnr]
 endfunction
 
-function! s:open_diff_window(vcs)
-    let window_info = s:open_window(a:vcs, 'diff')
+function! s:open_diff_window(vcs, info)
+    call s:open_window(a:vcs, 'diff', a:info)
     setlocal ft=diff
-    return window_info
 endfunction
 
-function! s:open_status_window(vcs)
-    let [status_winnr, status_bufnr] = s:open_window(a:vcs, 'status')
+function! s:open_status_window(vcs, info)
+    call s:open_window(a:vcs, 'status', a:info)
     set ft=gitcommit
-    let status_winheight = winheight(status_bufnr)
-    if line('$') < winheight(status_bufnr)
+    let status_winheight = winheight(a:info.status_bufnr)
+    if line('$') < winheight(a:info.status_bufnr)
         execute 'resize' line('$')
     endif
-
-    return [status_winnr, status_bufnr]
 endfunction
 
 function! s:execute_hook(name, info)
@@ -43,15 +38,11 @@ function! committia#open(vcs)
 
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%')}
 
-    let [diff_winnr, diff_bufnr] = s:open_diff_window(a:vcs)
-    let info.diff_winnr = diff_winnr
-    let info.diff_bufnr = diff_bufnr
+    call s:open_diff_window(a:vcs, info)
     call s:execute_hook('diff_open', info)
     wincmd p
 
-    let [status_winnr, status_bufnr] = s:open_status_window(a:vcs)
-    let info.status_winnr = status_winnr
-    let info.status_bufnr = status_bufnr
+    call s:open_status_window(a:vcs, info)
     call s:execute_hook('status_open', info)
     wincmd p
 
