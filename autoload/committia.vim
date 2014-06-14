@@ -28,6 +28,13 @@ function! s:open_status_window(vcs)
 endfunction
 
 function! committia#open(vcs)
+    if winwidth(0) < g:committia_min_window_width
+        if has_key(g:committia_hooks, 'post_open')
+            call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
+        endif
+        return
+    endif
+
     let commit_bufnr = bufnr('%')
 
     let [diff_winnr, diff_bufnr] = s:open_diff_window(a:vcs)
@@ -40,11 +47,7 @@ function! committia#open(vcs)
     undojoin | normal! dG
     execute 0
     vertical resize 80
-    setlocal spell
     if has_key(g:committia_hooks, 'post_open')
         call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
-    endif
-    if getline(1) ==# ''
-        startinsert
     endif
 endfunction
