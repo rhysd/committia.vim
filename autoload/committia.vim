@@ -1,3 +1,6 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
 function! s:open_window(vcs, type)
     let bufname = '__committia_' . a:type . '__'
     execute g:committia_{a:type}_window_opencmd bufname
@@ -44,10 +47,22 @@ function! committia#open(vcs)
 
     execute 0
     call search('^\%(\s*$\|\s*#\)', 'cW')
-    undojoin | normal! dG
+    normal! dG
     execute 0
     vertical resize 80
     if has_key(g:committia_hooks, 'post_open')
-        call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
+        call call(g:committia_hooks.post_open, [],
+                    \ {
+                    \   'vcs' : a:vcs,
+                    \   'edit_winnr' : commit_bufnr,
+                    \   'edit_bufnr' : winnr(),
+                    \   'diff_winnr' : diff_winnr,
+                    \   'diff_bufnr' : diff_bufnr,
+                    \   'status_winnr' : status_winnr,
+                    \   'status_bufnr' : status_bufnr
+                    \ })
     endif
 endfunction
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
