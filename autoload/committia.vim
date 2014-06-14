@@ -25,7 +25,12 @@ function! committia#open(vcs)
     endif
     wincmd p
 
-    normal! ggdG
+    " normal! ggdG
+    execute 0
+    call search('^\%(\s*$\|\s*#\)')
+    normal! dG
+    execute 0
     vertical resize 80
-    startinsert
+    normal! $
+    startinsert!
 endfunction
