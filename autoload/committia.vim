@@ -18,8 +18,7 @@ endfunction
 
 function! s:open_status_window(vcs)
     let [status_winnr, status_bufnr] = s:open_window(a:vcs, 'status')
-    noautocmd setlocal ft=gitcommit
-    syntax on
+    set ft=gitcommit
     let status_winheight = winheight(status_bufnr)
     if line('$') < winheight(status_bufnr)
         execute 'resize' line('$')
@@ -41,10 +40,11 @@ function! committia#open(vcs)
     undojoin | normal! dG
     execute 0
     vertical resize 80
-    normal! $
     setlocal spell
     if has_key(g:committia_hooks, 'post_open')
         call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
     endif
-    startinsert!
+    if getline(1) ==# ''
+        startinsert
+    endif
 endfunction

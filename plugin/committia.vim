@@ -8,7 +8,7 @@ let g:committia_hooks = get(g:, 'committia_status_hooks', {})
 
 augroup plugin-committia
     autocmd!
-    autocmd FileType gitcommit call committia#open('git')
+    autocmd BufReadPost COMMIT_EDITMSG if &ft ==# 'gitcommit' | call committia#open('git') | endif
     " ... Add other VCSs' commit editor filetypes
 augroup END
 
