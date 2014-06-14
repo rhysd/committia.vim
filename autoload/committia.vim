@@ -42,6 +42,7 @@ endfunction
 function! committia#open(vcs)
     if winwidth(0) < g:committia_min_window_width
         call s:execute_hook('edit_open', {'vcs' : a:vcs})
+        return
     endif
 
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%')}
