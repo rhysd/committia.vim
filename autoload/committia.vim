@@ -30,19 +30,27 @@ function! s:open_status_window(vcs)
     return [status_winnr, status_bufnr]
 endfunction
 
+function! s:execute_hook(name, info)
+    if has_key(g:committia_hooks, a:name)
+        call call(g:committia_hooks[a:name], [], a:info)
+    endif
+endfunction
+
 function! committia#open(vcs)
     if winwidth(0) < g:committia_min_window_width
-        if has_key(g:committia_hooks, 'post_open')
-            call call(g:committia_hooks.post_open, [winnr(), commit_bufnr, diff_winnr, diff_bufnr, status_winnr, status_bufnr])
-        endif
-        return
+        call s:execute_hook('edit_open', {'vcs' : a:vcs})
     endif
 
-    let commit_bufnr = bufnr('%')
+    let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%')}
 
     let [diff_winnr, diff_bufnr] = s:open_diff_window(a:vcs)
+    let info.diff_winnr = diff_winnr
+    let info.diff_bufnr = diff_bufnr
     wincmd p
+
     let [status_winnr, status_bufnr] = s:open_status_window(a:vcs)
+    let info.status_winnr = status_winnr
+    let info.status_bufnr = status_bufnr
     wincmd p
 
     execute 0
@@ -50,17 +58,8 @@ function! committia#open(vcs)
     normal! dG
     execute 0
     vertical resize 80
-    if has_key(g:committia_hooks, 'post_open')
-        call call(g:committia_hooks.post_open, [],
-                    \ {
-                    \   'vcs' : a:vcs,
-                    \   'edit_winnr' : commit_bufnr,
-                    \   'edit_bufnr' : winnr(),
-                    \   'diff_winnr' : diff_winnr,
-                    \   'diff_bufnr' : diff_bufnr,
-                    \   'status_winnr' : status_winnr,
-                    \   'status_bufnr' : status_bufnr
-                    \ })
+    if has_key(g:committia_hooks, 'edit_open')
+        call s:execute_hook('edit_open', info)
     endif
 endfunction
 

@@ -14,11 +14,11 @@ normal commit buffer.
 ## Hooks
 
 You can hook on opening the windows.
-An vimrc example is below.
+A vimrc example is below.
 
 ```vim
 let g:committia_hooks = {}
-function! g:committia_hooks.post_open()
+function! g:committia_hooks.edit_open()
     setlocal spell
 
     " If there is already no message, start with insert mode
