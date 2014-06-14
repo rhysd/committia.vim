@@ -33,7 +33,7 @@ endfunction
 
 function! s:remove_all_except_for_commit_message()
     execute 0
-    call search('^\%(\s*$\|\s*#\)', 'cW')
+    call search('\%(\_^\s*\_$\n\)*\_^\s*#', 'cW')
     normal! dG
     execute 0
     vertical resize 80
