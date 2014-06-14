@@ -53,6 +53,7 @@ endfunction
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
 - Add more VCS supports
 - Test all features
+- Support `git commit --amend` (now fallback to normal a commit buffer)
 
 ## License
 

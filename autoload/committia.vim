@@ -48,6 +48,11 @@ function! committia#open(vcs)
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%')}
 
     call s:open_diff_window(a:vcs, info)
+    if getline(1, '$') ==# ['']
+        execute info.diff_winnr . 'wincmd c'
+        wincmd p
+        return
+    endif
     call s:execute_hook('diff_open', info)
     wincmd p
 
