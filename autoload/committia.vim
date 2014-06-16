@@ -27,7 +27,7 @@ endfunction
 
 function! s:execute_hook(name, info)
     if has_key(g:committia_hooks, a:name)
-        call call(g:committia_hooks[a:name], [], a:info)
+        call call(g:committia_hooks[a:name], [a:info], g:committia_hooks)
     endif
 endfunction
 

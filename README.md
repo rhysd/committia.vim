@@ -24,24 +24,25 @@ Available hooks are:
 A vimrc example is below.
 
 ```vim
-" If there is already no message, start with insert mode
-" You can get the information about windows with 'self' dictionary
+" You can get the information about the windows with first argument as a dictionary.
 "
-"   self.vcs            : vcs type (e.g. 'git')   -> available in all hooks
-"   self.edit_winnr     : winnr of edit window    -> available in all hooks
-"   self.edit_bufnr     : bufnr of edit window    -> available in all hooks
-"   self.diff_winnr     : winnr of diff window    -> available in all hooks
-"   self.diff_bufnr     : bufnr of diff window    -> available in all hooks
-"   self.status_winnr   : winnr of status window  -> available in all hooks except for 'diff' hook
-"   self.status_bufnr   : bufnr of status window  -> available in all hooks except for 'diff' hook
+"   KEY              VALUE                      AVAILABILITY
+"-----------------------------------------------------------------------------------
+"   vcs            : vcs type (e.g. 'git')   -> all hooks
+"   edit_winnr     : winnr of edit window    -> ditto
+"   edit_bufnr     : bufnr of edit window    -> ditto
+"   diff_winnr     : winnr of diff window    -> ditto
+"   diff_bufnr     : bufnr of diff window    -> ditto
+"   status_winnr   : winnr of status window  -> all hooks except for 'diff_open' hook
+"   status_bufnr   : bufnr of status window  -> ditto
 
 let g:committia_hooks = {}
-function! g:committia_hooks.edit_open()
+function! g:committia_hooks.edit_open(info)
     " Additional settings
     setlocal spell
 
     " If no commit message, start with insert mode
-    if getline(1) ==# ''
+    if a:info.vcs ==# 'git' && getline(1) ==# ''
         startinsert
     end
 endfunction
