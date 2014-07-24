@@ -3,7 +3,8 @@ set cpo&vim
 
 function! s:open_window(vcs, type, info)
     let bufname = '__committia_' . a:type . '__'
-    execute 'silent' g:committia_{a:type}_window_opencmd bufname
+    let coltype = a:info['singlecolumn'] ? 'singlecolumn_' : ''
+    execute 'silent' g:committia_{coltype}{a:type}_window_opencmd bufname
     let a:info[a:type . '_winnr'] = bufwinnr(bufname)
     let a:info[a:type . '_bufnr'] = bufnr('%')
     call append(0, call('committia#' . a:vcs . '#' . a:type, []))
@@ -39,13 +40,8 @@ function! s:remove_all_except_for_commit_message()
     vertical resize 80
 endfunction
 
-function! committia#open(vcs)
-    if winwidth(0) < g:committia_min_window_width
-        call s:execute_hook('edit_open', {'vcs' : a:vcs})
-        return
-    endif
-
-    let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%')}
+function! s:open_multicolumn(vcs)
+    let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 0}
 
     call s:open_diff_window(a:vcs, info)
     if getline(1, '$') ==# ['']
@@ -62,6 +58,39 @@ function! committia#open(vcs)
 
     silent call s:remove_all_except_for_commit_message()
     call s:execute_hook('edit_open', info)
+endfunction
+
+function! s:open_singlecolumn(vcs)
+    let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 1}
+
+    call s:open_diff_window(a:vcs, info)
+    if getline(1, '$') ==# ['']
+        execute info.diff_winnr . 'wincmd c'
+        wincmd p
+        return
+    endif
+    call s:execute_hook('diff_open', info)
+    wincmd p
+
+    let height = min([line('$') + 3, 16])
+    execute 'resize' height
+    call s:execute_hook('edit_open', info)
+endfunction
+
+function! committia#open(vcs)
+    let is_narrow = winwidth(0) < g:committia_min_window_width
+    let use_singlecolumn = g:committia_use_singlecolumn ==# 'always' || (is_narrow && g:committia_use_singlecolumn ==# 'fallback')
+
+    if is_narrow && !use_singlecolumn
+        call s:execute_hook('edit_open', {'vcs' : a:vcs})
+        return
+    endif
+
+    if use_singlecolumn
+        call s:open_singlecolumn(a:vcs)
+    else
+        call s:open_multicolumn(a:vcs)
+    endif
 endfunction
 
 let &cpo = s:save_cpo
