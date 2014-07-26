@@ -15,6 +15,7 @@ inoremap <silent> <Plug>(committia-scroll-diff-up-half) <C-o>:call committia#scr
 augroup plugin-committia
     autocmd!
     autocmd BufReadPost COMMIT_EDITMSG if &ft ==# 'gitcommit' | call committia#open('git') | endif
+
     " ... Add other VCSs' commit editor filetypes
 augroup END
 

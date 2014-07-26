@@ -14,9 +14,18 @@ function! s:open_window(vcs, type, info)
     setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified
 endfunction
 
+" Open diff window.  If no diff is detected, close the window and return to
+" the original window.
+" It returns 0 if the window is not open, othewise 1
 function! s:open_diff_window(vcs, info)
     call s:open_window(a:vcs, 'diff', a:info)
     setlocal ft=diff
+    if getline(1, '$') ==# ['']
+        execute info.diff_winnr . 'wincmd c'
+        wincmd p
+        return 0
+    endif
+    return 1
 endfunction
 
 function! s:open_status_window(vcs, info)
@@ -26,6 +35,7 @@ function! s:open_status_window(vcs, info)
     if line('$') < winheight(a:info.status_bufnr)
         execute 'resize' line('$')
     endif
+    return 1
 endfunction
 
 function! s:execute_hook(name, info)
@@ -34,7 +44,7 @@ function! s:execute_hook(name, info)
     endif
 endfunction
 
-function! s:remove_all_except_for_commit_message()
+function! s:remove_all_contents_except_for_commit_message()
     execute 0
     call search('\m\%(\_^\s*\_$\n\)*\_^\s*#', 'cW')
     normal! "_dG
@@ -68,10 +78,8 @@ endfunction
 function! s:open_multicolumn(vcs)
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 0}
 
-    call s:open_diff_window(a:vcs, info)
-    if getline(1, '$') ==# ['']
-        execute info.diff_winnr . 'wincmd c'
-        wincmd p
+    let diff_window_opened = s:open_diff_window(a:vcs, info)
+    if !diff_window_opened
         return
     endif
     call s:execute_hook('diff_open', info)
@@ -81,7 +89,7 @@ function! s:open_multicolumn(vcs)
     call s:execute_hook('status_open', info)
     wincmd p
 
-    silent call s:remove_all_except_for_commit_message()
+    silent call s:remove_all_contents_except_for_commit_message()
     call s:execute_hook('edit_open', info)
 
     let s:current_info = info
@@ -94,10 +102,8 @@ endfunction
 function! s:open_singlecolumn(vcs)
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 1}
 
-    call s:open_diff_window(a:vcs, info)
-    if getline(1, '$') ==# ['']
-        execute info.diff_winnr . 'wincmd c'
-        wincmd p
+    let diff_window_opened = s:open_diff_window(a:vcs, info)
+    if !diff_window_opened
         return
     endif
     call s:execute_hook('diff_open', info)
@@ -116,7 +122,9 @@ endfunction
 
 function! committia#open(vcs)
     let is_narrow = winwidth(0) < g:committia_min_window_width
-    let use_singlecolumn = g:committia_use_singlecolumn ==# 'always' || (is_narrow && g:committia_use_singlecolumn ==# 'fallback')
+    let use_singlecolumn
+                \ = g:committia_use_singlecolumn ==# 'always'
+                \ || (is_narrow && g:committia_use_singlecolumn ==# 'fallback')
 
     if is_narrow && !use_singlecolumn
         call s:execute_hook('edit_open', {'vcs' : a:vcs})
