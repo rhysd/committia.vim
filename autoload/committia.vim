@@ -56,6 +56,13 @@ function! s:callback_on_window_closed()
     endif
 endfunction
 
+function! committia#scroll_window(type, cmd)
+    let target_winnr = bufwinnr(s:current_info[a:type . '_bufnr'])
+    execute target_winnr . 'wincmd w'
+    execute 'normal!' a:cmd
+    wincmd p
+endfunction
+
 function! committia#open(vcs)
     if winwidth(0) < g:committia_min_window_width
         call s:execute_hook('edit_open', {'vcs' : a:vcs})

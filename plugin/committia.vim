@@ -7,6 +7,9 @@ let g:committia_diff_window_opencmd = get(g:, 'committia_diff_window_opencmd', '
 let g:committia_status_window_opencmd = get(g:, 'committia_status_window_opencmd', 'belowright split')
 let g:committia_hooks = get(g:, 'committia_hooks', {})
 
+inoremap <silent> <Plug>(committia-scroll-diff-down-half) <C-o>:call committia#scroll_window('diff', "\<C-d>")<CR>
+inoremap <silent> <Plug>(committia-scroll-diff-up-half) <C-o>:call committia#scroll_window('diff', "\<C-u>")<CR>
+
 augroup plugin-committia
     autocmd!
     autocmd BufReadPost COMMIT_EDITMSG if &ft ==# 'gitcommit' | call committia#open('git') | endif
