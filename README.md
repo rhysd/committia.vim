@@ -63,7 +63,7 @@ endfunction
 
 ## Contribution
 
-- @uasi : single column mode
+- [@uasi](https://github.com/uasi) : single column mode
 
 ## License
 
