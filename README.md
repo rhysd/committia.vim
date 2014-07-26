@@ -9,7 +9,13 @@ need to repeat scroll and back to former position in order to see long commit di
 If the width of Vim window is too narrow (160 characters by default), committia opens
 normal commit buffer.
 
-![screen shot](https://dl.dropboxusercontent.com/u/2753138/screenshot_committia.jpg)
+For wide window:
+
+![double column mode](https://dl.dropboxusercontent.com/u/2753138/screenshot_committia.jpg)
+
+For narrow window:
+
+![single column mode](https://dl.dropboxusercontent.com/u/2753138/screenshot_committia_narrow.jpg)
 
 ## Hooks
 
@@ -50,11 +56,14 @@ endfunction
 
 ## Future
 
-- Scroll diff window from insert mode in edit window.
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
 - Add more VCS supports
 - Test all features
 - Support `git commit --amend` (now fallback to normal a commit buffer)
+
+## Contribution
+
+- @uasi : single column mode
 
 ## License
 
