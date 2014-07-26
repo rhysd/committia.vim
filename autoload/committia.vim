@@ -68,10 +68,14 @@ function! s:callback_on_window_closed()
     endif
 endfunction
 
+function! s:get_map_of(cmd)
+    return eval('"\<' . a:cmd . '>"')
+endfunction
+
 function! committia#scroll_window(type, cmd)
     let target_winnr = bufwinnr(s:current_info[a:type . '_bufnr'])
     execute target_winnr . 'wincmd w'
-    execute 'normal!' a:cmd
+    execute 'normal!' s:get_map_of(a:cmd)
     wincmd p
 endfunction
 
