@@ -45,10 +45,12 @@ endfunction
 function! s:callback_on_window_closed()
     if bufnr('%') == s:current_info.edit_bufnr
         for n in ['diff', 'status']
-            let winnr = bufwinnr(s:current_info[n . '_bufnr'])
-            if winnr != -1
-                execute winnr . 'wincmd w'
-                wincmd c
+            if has_key(s:current_info, n . '_bufnr')
+                let winnr = bufwinnr(s:current_info[n . '_bufnr'])
+                if winnr != -1
+                    execute winnr . 'wincmd w'
+                    wincmd c
+                endif
             endif
         endfor
         let s:current_info = {}
@@ -104,6 +106,12 @@ function! s:open_singlecolumn(vcs)
     let height = min([line('$') + 3, get(g:, 'committia_singlecolumn_edit_max_winheight', 16)])
     execute 'resize' height
     call s:execute_hook('edit_open', info)
+
+    let s:current_info = info
+    setlocal bufhidden=wipe
+    augroup plugin-committia-winclosed
+        autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
+    augroup END
 endfunction
 
 function! committia#open(vcs)
