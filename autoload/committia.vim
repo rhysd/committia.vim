@@ -46,7 +46,8 @@ endfunction
 
 function! s:remove_all_contents_except_for_commit_message()
     execute 0
-    call search('\m\%(\_^\s*\_$\n\)*\_^\s*#', 'cW')
+    " Handle squash message
+    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter the commit', 'cW')
     normal! "_dG
     execute 0
     vertical resize 80
