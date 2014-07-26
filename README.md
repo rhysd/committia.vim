@@ -51,8 +51,34 @@ function! g:committia_hooks.edit_open(info)
     if a:info.vcs ==# 'git' && getline(1) ==# ''
         startinsert
     end
+
+    " Scroll the diff window from insert mode
+    " Map <C-n> and <C-p>
+    imap <buffer><C-n> <Plug>(committia-scroll-diff-down-half)
+    imap <buffer><C-p> <Plug>(committia-scroll-diff-up-half)
+
 endfunction
 ```
+
+## Mappings
+
+Scroll mappings for insert mode are available.
+
+- `<Plug>(committia-scroll-diff-down-half)`
+
+Scroll down the diff window by half a screen.
+
+- `<Plug>(committia-scroll-diff-up-half)`
+
+Scroll up the diff window by half a screen.
+
+- `<Plug>(committia-scroll-diff-down-page)`
+
+Scroll down the diff window by a screen.
+
+- `<Plug>(committia-scroll-diff-up-page)`
+
+Scroll up the diff window by a screen.
 
 ## Future
 
