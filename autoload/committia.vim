@@ -101,7 +101,7 @@ function! s:open_singlecolumn(vcs)
     call s:execute_hook('diff_open', info)
     wincmd p
 
-    let height = min([line('$') + 3, 16])
+    let height = min([line('$') + 3, get(g:, 'committia_singlecolumn_edit_max_winheight', 16)])
     execute 'resize' height
     call s:execute_hook('edit_open', info)
 endfunction
