@@ -21,7 +21,7 @@ function! s:open_diff_window(vcs, info)
     call s:open_window(a:vcs, 'diff', a:info)
     setlocal ft=diff
     if getline(1, '$') ==# ['']
-        execute info.diff_winnr . 'wincmd c'
+        execute a:info.diff_winnr . 'wincmd c'
         wincmd p
         return 0
     endif
@@ -44,10 +44,10 @@ function! s:execute_hook(name, info)
     endif
 endfunction
 
-function! s:remove_all_contents_except_for_commit_message()
+function! s:remove_all_contents_except_for_commit_message(vcs)
     execute 0
     " Handle squash message
-    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter the commit', 'cW')
+    call call('committia#' . a:vcs . '#search_end_of_edit_region', [])
     normal! "_dG
     execute 0
     vertical resize 80
@@ -75,6 +75,9 @@ endfunction
 
 function! committia#scroll_window(type, cmd)
     let target_winnr = bufwinnr(s:current_info[a:type . '_bufnr'])
+    if target_winnr == -1
+        return
+    endif
     execute target_winnr . 'wincmd w'
     execute 'normal!' s:get_map_of(a:cmd)
     wincmd p
@@ -94,7 +97,7 @@ function! s:open_multicolumn(vcs)
     call s:execute_hook('status_open', info)
     wincmd p
 
-    silent call s:remove_all_contents_except_for_commit_message()
+    silent call s:remove_all_contents_except_for_commit_message(info.vcs)
     call s:execute_hook('edit_open', info)
 
     let s:current_info = info

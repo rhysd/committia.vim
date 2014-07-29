@@ -30,3 +30,7 @@ function! committia#git#status(...)
     endif
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
+
+function! committia#git#search_end_of_edit_region()
+    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter the commit', 'cW')
+endfunction
