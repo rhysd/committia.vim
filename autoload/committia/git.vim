@@ -2,8 +2,9 @@ if ! executable('git')
     echoerr "'git' command not found"
 endif
 
-let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'git diff -u --cached')
-let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'git status -b')
+let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
+let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached')
+let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
 function! s:git_root()
     let root = matchstr(system('git rev-parse --show-cdup'), '[^\n]\+')
