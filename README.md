@@ -6,8 +6,8 @@ the commit buffer.
 
 Split the buffer to 3 windows; edit window, status window and diff window.  You no longer
 need to repeat scroll and back to former position in order to see long commit diff.
-If the width of Vim window is too narrow (160 characters by default), committia opens
-normal commit buffer.
+If the width of Vim window is too narrow (160 characters by default), committia falls back
+to single column mode, which has 2 windows; edit window and diff window.
 
 For wide window:
 
