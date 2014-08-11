@@ -6,18 +6,18 @@ let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached')
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
-function! s:git_root()
-    let root = matchstr(system('git rev-parse --show-cdup'), '[^\n]\+')
-    if v:shell_error
-        throw "committia: git: Failed to execute 'git rev-parse'"
-    endif
-    return root
+function! s:search_git_root()
+    return matchstr('.*\ze\/.git\/COMMIT_EDITMSG')
 endfunction
 
 function! committia#git#diff(...)
-    let path = a:0 > 0 ? a:1 : s:git_root()
+    let git_dir = a:0 > 0 ? a:1 : s:search_git_root()
 
-    let diff = system(g:committia#git#diff_cmd . ' ' . path)
+    if git_dir ==# ''
+        return ''
+    endif
+
+    let diff = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute diff command"
     endif
@@ -25,7 +25,12 @@ function! committia#git#diff(...)
 endfunction
 
 function! committia#git#status(...)
-    let status = system(g:committia#git#status_cmd)
+    let git_dir = a:0 > 0 ? a:1 : s:search_git_root()
+    if git_dir ==# ''
+        return ''
+    endif
+
+    let status = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute status command"
     endif
