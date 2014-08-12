@@ -7,14 +7,19 @@ let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cach
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
 function! s:search_git_root()
-    return matchstr(expand('%:p'), '.*\ze\/.git\/COMMIT_EDITMSG')
+    if expand('%:p') =~# '\/.git\/COMMIT_EDITMSG'
+        return expand('%:p:h')
+    endif
+
+    " TODO
+    return ''
 endfunction
 
 function! committia#git#diff(...)
     let git_dir = a:0 > 0 ? a:1 : s:search_git_root()
 
     if git_dir ==# ''
-        return ''
+        throw "committia: git: Failed to get git-dir"
     endif
 
     let diff = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))

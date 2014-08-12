@@ -4,15 +4,18 @@ set cpo&vim
 let s:current_info = {}
 
 function! s:open_window(vcs, type, info)
+    let content = call('committia#' . a:vcs . '#' . a:type, [])
+
     let bufname = '__committia_' . a:type . '__'
     let coltype = a:info['singlecolumn'] ? 'singlecolumn_' : ''
     execute 'silent' g:committia_{coltype}{a:type}_window_opencmd bufname
     let a:info[a:type . '_winnr'] = bufwinnr(bufname)
     let a:info[a:type . '_bufnr'] = bufnr('%')
-    call append(0, call('committia#' . a:vcs . '#' . a:type, []))
+    call append(0, content)
     execute 0
     setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified
 endfunction
+
 
 " Open diff window.  If no diff is detected, close the window and return to
 " the original window.
