@@ -11,8 +11,11 @@ function! s:search_git_root()
         return expand('%:p:h')
     endif
 
-    " TODO
-    return ''
+    let root = matchstr(system(g:committia#git#cmd . ' rev-parse --show-cdup'),  '[^\n]\+')
+    if v:shell_error
+        throw "committia: git: Failed to execute 'git rev-parse'"
+    endif
+    return root
 endfunction
 
 function! committia#git#diff(...)
