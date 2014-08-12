@@ -7,7 +7,7 @@ let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cach
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
 function! s:search_git_root()
-    return matchstr('.*\ze\/.git\/COMMIT_EDITMSG')
+    return matchstr(expand('%:p'), '.*\ze\/.git\/COMMIT_EDITMSG')
 endfunction
 
 function! committia#git#diff(...)
