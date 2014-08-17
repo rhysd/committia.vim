@@ -8,7 +8,7 @@ let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b'
 
 function! s:search_git_root()
     " '/.git' is unnecessary under submodule directory.
-    if expand('%:p') =~# '\([\\/].git\)\?[\\/]COMMIT_EDITMSG'
+    if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?COMMIT_EDITMSG$'
         return expand('%:p:h')
     endif
 
