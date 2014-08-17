@@ -7,7 +7,8 @@ let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cach
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
 function! s:search_git_root()
-    if expand('%:p') =~# '\/.git\/COMMIT_EDITMSG'
+    " '/.git' is unnecessary under submodule directory.
+    if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?COMMIT_EDITMSG$'
         return expand('%:p:h')
     endif
 
