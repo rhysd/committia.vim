@@ -16,7 +16,7 @@ function! s:search_git_dir()
     if v:shell_error
         throw "committia: git: Failed to execute 'git rev-parse'"
     endif
-    return root
+    return root . $GIT_DIR
 endfunction
 
 function! committia#git#diff(...)
