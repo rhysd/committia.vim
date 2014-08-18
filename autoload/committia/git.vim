@@ -6,7 +6,7 @@ let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached')
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
-function! s:search_git_root()
+function! s:search_git_dir()
     " '/.git' is unnecessary under submodule directory.
     if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?COMMIT_EDITMSG$'
         return expand('%:p:h')
@@ -20,7 +20,7 @@ function! s:search_git_root()
 endfunction
 
 function! committia#git#diff(...)
-    let git_dir = a:0 > 0 ? a:1 : s:search_git_root()
+    let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
     if git_dir ==# ''
         throw "committia: git: Failed to get git-dir"
@@ -34,7 +34,7 @@ function! committia#git#diff(...)
 endfunction
 
 function! committia#git#status(...)
-    let git_dir = a:0 > 0 ? a:1 : s:search_git_root()
+    let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
     if git_dir ==# ''
         return ''
     endif
