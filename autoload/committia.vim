@@ -72,6 +72,13 @@ function! s:callback_on_window_closed()
     endif
 endfunction
 
+function! s:callback_on_window_closed_workaround()
+    let edit_winnr = bufwinnr(s:current_info.edit_bufnr)
+    if edit_winnr == -1
+        quit!
+    endif
+endfunction
+
 function! s:get_map_of(cmd)
     return eval('"\<' . a:cmd . '>"')
 endfunction
@@ -84,6 +91,16 @@ function! committia#scroll_window(type, cmd)
     execute target_winnr . 'wincmd w'
     execute 'normal!' s:get_map_of(a:cmd)
     wincmd p
+endfunction
+
+function! s:set_callback_on_closed()
+    augroup plugin-committia-winclosed
+        if exists('##QuitPre')
+            autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
+        else
+            autocmd WinEnter __committia_diff__,__committia_status__ nested call s:callback_on_window_closed_workaround()
+        end
+    augroup END
 endfunction
 
 function! s:open_multicolumn(vcs)
@@ -105,9 +122,7 @@ function! s:open_multicolumn(vcs)
 
     let s:current_info = info
     setlocal bufhidden=wipe
-    augroup plugin-committia-winclosed
-        autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
-    augroup END
+    call s:set_callback_on_closed()
 endfunction
 
 function! s:open_singlecolumn(vcs)
@@ -126,9 +141,7 @@ function! s:open_singlecolumn(vcs)
 
     let s:current_info = info
     setlocal bufhidden=wipe
-    augroup plugin-committia-winclosed
-        autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
-    augroup END
+    call s:set_callback_on_closed()
 endfunction
 
 function! committia#open(vcs)
