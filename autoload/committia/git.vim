@@ -16,6 +16,11 @@ function! s:search_git_dir()
     if v:shell_error
         throw "committia: git: Failed to execute 'git rev-parse'"
     endif
+
+    if !isdirectory(root . $GIT_DIR)
+        throw "committia: git: Failed to get git-dir from $GIT_DIR"
+    endif
+
     return root . $GIT_DIR
 endfunction
 
