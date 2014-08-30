@@ -27,6 +27,11 @@ endfunction
 function! committia#git#diff(...)
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
+    if $GIT_INDEX_FILE == ''
+        let $GIT_INDEX_FILE = git_dir . (has('win32') || has('win64') ? '\' : '/') . 'index.lock'
+        let index_file_was_not_found = 1
+    endif
+
     if git_dir ==# ''
         throw "committia: git: Failed to get git-dir"
     endif
@@ -34,6 +39,10 @@ function! committia#git#diff(...)
     let diff = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute diff command"
+    endif
+
+    if exists('l:index_file_was_not_found')
+        let $GIT_INDEX_FILE = ''
     endif
     return split(diff, '\n')
 endfunction
