@@ -1,8 +1,6 @@
-if !(bufname('%') =~ 'COMMIT_EDITMSG$')
-    finish
-endif
+let s:show_committia = get(g:, 'committia_show', 0)
 
-if (exists('g:loaded_committia') && g:loaded_committia) || &cp
+if (exists('g:loaded_committia') && g:loaded_committia) ||  s:show_committia == 0 || &cp
     finish
 endif
 
