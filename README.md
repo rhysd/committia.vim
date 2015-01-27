@@ -80,6 +80,22 @@ Scroll down the diff window by a screen.
 
 Scroll up the diff window by a screen.
 
+## Variables
+
+Some variables are available to control the behavior of committia.vim.
+
+- `g:committia_open_only_vim_starting`
+
+If the value is `0`, committia.vim always attempts to open committia's buffer when `COMMIT_EDITMSG` buffer is opened.  If you use [vim-fugitive](https://github.com/tpope/vim-fugitive), I recommend to set this value to `1`.  The default value is `1`.
+
+- `g:committia_use_singlecolumn`
+
+If the value is `'always'`, committia.vim always employs single column mode.
+
+- `g:committia_min_window_width`
+
+If the width of window is narrower than the value, committia.vim employs single column mode.  The default value is `160`.
+
 ## Future
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
