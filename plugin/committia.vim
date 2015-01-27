@@ -4,7 +4,7 @@ endif
 
 augroup plugin-committia
     autocmd!
-    autocmd BufReadPost COMMIT_EDITMSG if &ft ==# 'gitcommit' | call committia#open('git') | endif
+    autocmd BufReadPost COMMIT_EDITMSG if &ft ==# 'gitcommit' && has('vim_starting') | call committia#open('git') | endif
 
     " ... Add other VCSs' commit editor filetypes
 augroup END
