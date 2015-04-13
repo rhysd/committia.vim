@@ -23,7 +23,7 @@ nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_w
 
 let s:current_info = {}
 
-function! s:open_window(vcs, type, info)
+function! s:open_window(vcs, type, info, ft)
     let content = call('committia#' . a:vcs . '#' . a:type, [])
 
     let bufname = '__committia_' . a:type . '__'
@@ -33,6 +33,7 @@ function! s:open_window(vcs, type, info)
     let a:info[a:type . '_bufnr'] = bufnr('%')
     call append(0, content)
     execute 0
+    execute 'setlocal ft=' . a:ft
     setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified
 endfunction
 
@@ -41,8 +42,7 @@ endfunction
 " the original window.
 " It returns 0 if the window is not open, othewise 1
 function! s:open_diff_window(vcs, info)
-    call s:open_window(a:vcs, 'diff', a:info)
-    setlocal ft=diff
+    call s:open_window(a:vcs, 'diff', a:info, 'diff')
     if getline(1, '$') ==# ['']
         execute a:info.diff_winnr . 'wincmd c'
         wincmd p
@@ -52,8 +52,7 @@ function! s:open_diff_window(vcs, info)
 endfunction
 
 function! s:open_status_window(vcs, info)
-    call s:open_window(a:vcs, 'status', a:info)
-    set ft=gitcommit
+    call s:open_window(a:vcs, 'status', a:info, 'gitcommit')
     let status_winheight = winheight(a:info.status_bufnr)
     if line('$') < winheight(a:info.status_bufnr)
         execute 'resize' line('$')
