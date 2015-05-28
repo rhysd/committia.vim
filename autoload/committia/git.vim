@@ -41,7 +41,7 @@ function! committia#git#diff(...)
         let index_file_was_not_found = 1
     endif
 
-    let diff = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
+    let diff = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute diff command"
     endif
@@ -58,7 +58,7 @@ function! committia#git#status(...)
         return ''
     endif
 
-    let status = system(printf('%s --git-dir=%s %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
+    let status = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute status command"
     endif
