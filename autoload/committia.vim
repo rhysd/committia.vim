@@ -164,6 +164,10 @@ function! s:open_singlecolumn(vcs)
 endfunction
 
 function! committia#open(vcs)
+    if (exists('s:opened_committia') && s:opened_committia)
+        return
+    endif
+    let s:opened_committia = 1
     let is_narrow = winwidth(0) < g:committia_min_window_width
     let use_singlecolumn
                 \ = g:committia_use_singlecolumn ==# 'always'
