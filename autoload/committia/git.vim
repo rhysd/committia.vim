@@ -6,7 +6,7 @@ if ! executable(g:committia#git#cmd)
     echoerr g:committia#git#cmd . " command is not found"
 endif
 
-function! s:search_git_dir()
+function! s:search_git_dir() abort
     " '/.git' is unnecessary under submodule directory.
     if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?COMMIT_EDITMSG$'
         return expand('%:p:h')
@@ -24,7 +24,7 @@ function! s:search_git_dir()
     return root . $GIT_DIR
 endfunction
 
-function! committia#git#diff(...)
+function! committia#git#diff(...) abort
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
     if git_dir ==# ''
@@ -52,7 +52,7 @@ function! committia#git#diff(...)
     return split(diff, '\n')
 endfunction
 
-function! committia#git#status(...)
+function! committia#git#status(...) abort
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
     if git_dir ==# ''
         return ''
@@ -65,6 +65,6 @@ function! committia#git#status(...)
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
 
-function! committia#git#search_end_of_edit_region()
+function! committia#git#search_end_of_edit_region() abort
     call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter the commit', 'cW')
 endfunction

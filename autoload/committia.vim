@@ -23,7 +23,7 @@ nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_w
 
 let s:current_info = {}
 
-function! s:open_window(vcs, type, info, ft)
+function! s:open_window(vcs, type, info, ft) abort
     let content = call('committia#' . a:vcs . '#' . a:type, [])
 
     let bufname = '__committia_' . a:type . '__'
@@ -41,7 +41,7 @@ endfunction
 " Open diff window.  If no diff is detected, close the window and return to
 " the original window.
 " It returns 0 if the window is not open, othewise 1
-function! s:open_diff_window(vcs, info)
+function! s:open_diff_window(vcs, info) abort
     call s:open_window(a:vcs, 'diff', a:info, 'diff')
     if getline(1, '$') ==# ['']
         execute a:info.diff_winnr . 'wincmd c'
@@ -51,7 +51,7 @@ function! s:open_diff_window(vcs, info)
     return 1
 endfunction
 
-function! s:open_status_window(vcs, info)
+function! s:open_status_window(vcs, info) abort
     call s:open_window(a:vcs, 'status', a:info, 'gitcommit')
     let status_winheight = winheight(a:info.status_bufnr)
     if line('$') < winheight(a:info.status_bufnr)
@@ -60,13 +60,13 @@ function! s:open_status_window(vcs, info)
     return 1
 endfunction
 
-function! s:execute_hook(name, info)
+function! s:execute_hook(name, info) abort
     if has_key(g:committia_hooks, a:name)
         call call(g:committia_hooks[a:name], [a:info], g:committia_hooks)
     endif
 endfunction
 
-function! s:remove_all_contents_except_for_commit_message(vcs)
+function! s:remove_all_contents_except_for_commit_message(vcs) abort
     execute 0
     " Handle squash message
     call call('committia#' . a:vcs . '#search_end_of_edit_region', [])
@@ -75,7 +75,7 @@ function! s:remove_all_contents_except_for_commit_message(vcs)
     vertical resize 80
 endfunction
 
-function! s:callback_on_window_closed()
+function! s:callback_on_window_closed() abort
     if bufnr('%') == s:current_info.edit_bufnr
         for n in ['diff', 'status']
             if has_key(s:current_info, n . '_bufnr')
@@ -91,18 +91,18 @@ function! s:callback_on_window_closed()
     endif
 endfunction
 
-function! s:callback_on_window_closed_workaround()
+function! s:callback_on_window_closed_workaround() abort
     let edit_winnr = bufwinnr(s:current_info.edit_bufnr)
     if edit_winnr == -1
         quit!
     endif
 endfunction
 
-function! s:get_map_of(cmd)
+function! s:get_map_of(cmd) abort
     return eval('"\<' . a:cmd . '>"')
 endfunction
 
-function! committia#scroll_window(type, cmd)
+function! committia#scroll_window(type, cmd) abort
     let target_winnr = bufwinnr(s:current_info[a:type . '_bufnr'])
     if target_winnr == -1
         return
@@ -112,7 +112,7 @@ function! committia#scroll_window(type, cmd)
     wincmd p
 endfunction
 
-function! s:set_callback_on_closed()
+function! s:set_callback_on_closed() abort
     augroup plugin-committia-winclosed
         if exists('##QuitPre')
             autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
@@ -122,7 +122,7 @@ function! s:set_callback_on_closed()
     augroup END
 endfunction
 
-function! s:open_multicolumn(vcs)
+function! s:open_multicolumn(vcs) abort
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 0}
 
     let diff_window_opened = s:open_diff_window(a:vcs, info)
@@ -144,7 +144,7 @@ function! s:open_multicolumn(vcs)
     call s:set_callback_on_closed()
 endfunction
 
-function! s:open_singlecolumn(vcs)
+function! s:open_singlecolumn(vcs) abort
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 1}
 
     let diff_window_opened = s:open_diff_window(a:vcs, info)
@@ -163,7 +163,7 @@ function! s:open_singlecolumn(vcs)
     call s:set_callback_on_closed()
 endfunction
 
-function! committia#open(vcs)
+function! committia#open(vcs) abort
     let is_narrow = winwidth(0) < g:committia_min_window_width
     let use_singlecolumn
                 \ = g:committia_use_singlecolumn ==# 'always'
