@@ -24,6 +24,10 @@ function! s:search_git_dir() abort
     return root . $GIT_DIR
 endfunction
 
+function! s:execute_git(cmd, git_dir) abort
+    return system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
+endfunction
+
 function! committia#git#diff(...) abort
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
@@ -41,7 +45,7 @@ function! committia#git#diff(...) abort
         let index_file_was_not_found = 1
     endif
 
-    let diff = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
+    let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
     if v:shell_error
         throw "committia: git: Failed to execute diff command"
     endif
@@ -58,7 +62,7 @@ function! committia#git#status(...) abort
         return ''
     endif
 
-    let status = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
+    let status = s:execute_git(g:committia#git#status_cmd, git_dir)
     if v:shell_error
         throw "committia: git: Failed to execute status command"
     endif
