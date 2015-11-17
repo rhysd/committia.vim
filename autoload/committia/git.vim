@@ -24,22 +24,6 @@ function! s:search_git_dir() abort
     return root . $GIT_DIR
 endfunction
 
-function! s:system(cmdline) abort
-    let cwd_save = getcwd()
-
-    if fnamemodify(cwd_save, ':t') !=# '.git'
-        return system(a:cmdline)
-    endif
-
-    " Workaround for 'autochdir' (#20)
-    try
-        execute 'cd' fnamemodify(cwd_save, ':h')
-        return system(a:cmdline)
-    finally
-        execute 'cd' cwd_save
-    endtry
-endfunction
-
 function! committia#git#diff(...) abort
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
@@ -57,7 +41,7 @@ function! committia#git#diff(...) abort
         let index_file_was_not_found = 1
     endif
 
-    let diff = s:system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
+    let diff = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#diff_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute diff command"
     endif
@@ -74,7 +58,7 @@ function! committia#git#status(...) abort
         return ''
     endif
 
-    let status = s:system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
+    let status = system(printf('%s --git-dir="%s" %s', g:committia#git#cmd, git_dir, g:committia#git#status_cmd))
     if v:shell_error
         throw "committia: git: Failed to execute status command"
     endif
