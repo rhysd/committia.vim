@@ -174,17 +174,11 @@ function! committia#open(vcs) abort
         return
     endif
 
-    let autochdir_save = &autochdir
-    try
-        set noautochdir
-        if use_singlecolumn
-            call s:open_singlecolumn(a:vcs)
-        else
-            call s:open_multicolumn(a:vcs)
-        endif
-    finally
-        let &autochdir = autochdir_save
-    endtry
+    if use_singlecolumn
+        call s:open_singlecolumn(a:vcs)
+    else
+        call s:open_multicolumn(a:vcs)
+    endif
 endfunction
 
 let &cpo = s:save_cpo
