@@ -47,7 +47,7 @@ function! committia#git#diff(...) abort
 
     let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
     if v:shell_error
-        throw "committia: git: Failed to execute diff command"
+        throw "committia: git: Failed to execute diff command: " . diff
     endif
 
     if exists('l:index_file_was_not_found')
@@ -64,7 +64,7 @@ function! committia#git#status(...) abort
 
     let status = s:execute_git(g:committia#git#status_cmd, git_dir)
     if v:shell_error
-        throw "committia: git: Failed to execute status command"
+        throw "committia: git: Failed to execute status command: " . status
     endif
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
