@@ -67,11 +67,11 @@ function! s:execute_hook(name, info) abort
 endfunction
 
 function! s:remove_all_contents_except_for_commit_message(vcs) abort
-    execute 0
+    execute 1
     " Handle squash message
     call call('committia#' . a:vcs . '#search_end_of_edit_region', [])
-    normal! "_dG
-    execute 0
+    silent normal! "_dG
+    execute 1
     vertical resize 80
 endfunction
 
@@ -115,7 +115,7 @@ endfunction
 function! s:set_callback_on_closed() abort
     augroup plugin-committia-winclosed
         if exists('##QuitPre')
-            autocmd QuitPre COMMIT_EDITMSG call s:callback_on_window_closed()
+            autocmd QuitPre COMMIT_EDITMSG,MERGE_MSG call s:callback_on_window_closed()
         else
             autocmd WinEnter __committia_diff__,__committia_status__ nested call s:callback_on_window_closed_workaround()
         end
@@ -136,7 +136,7 @@ function! s:open_multicolumn(vcs) abort
     call s:execute_hook('status_open', info)
     wincmd p
 
-    silent call s:remove_all_contents_except_for_commit_message(info.vcs)
+    call s:remove_all_contents_except_for_commit_message(info.vcs)
     call s:execute_hook('edit_open', info)
 
     let s:current_info = info

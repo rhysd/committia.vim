@@ -10,7 +10,7 @@ endfunction
 
 augroup plugin-committia
     autocmd!
-    autocmd BufReadPost COMMIT_EDITMSG if s:should_open('gitcommit') | call committia#open('git') | endif
+    autocmd BufReadPost COMMIT_EDITMSG,MERGE_MSG if s:should_open('gitcommit') | call committia#open('git') | endif
 
     " ... Add other VCSs' commit editor filetypes
 augroup END

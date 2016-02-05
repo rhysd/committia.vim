@@ -8,7 +8,7 @@ endif
 
 function! s:search_git_dir() abort
     " '/.git' is unnecessary under submodule directory.
-    if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?COMMIT_EDITMSG$'
+    if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?\%(COMMIT_EDITMSG\|MERGE_MSG\)$'
         return expand('%:p:h')
     endif
 
@@ -70,5 +70,5 @@ function! committia#git#status(...) abort
 endfunction
 
 function! committia#git#search_end_of_edit_region() abort
-    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter the commit', 'cW')
+    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter \%(the\|a\) commit', 'cW')
 endfunction
