@@ -101,7 +101,6 @@ If the width of window is narrower than the value, committia.vim employs single 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
 - Add more VCS supports
 - Test all features
-- Support `git commit --amend` (now fallback to normal a commit buffer)
 
 ## Contribution
 

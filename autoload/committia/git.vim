@@ -53,7 +53,16 @@ function! committia#git#diff(...) abort
     if exists('l:index_file_was_not_found')
         let $GIT_INDEX_FILE = ''
     endif
-    return split(diff, '\n')
+
+    if diff ==# ''
+         let inline_diff_start_line = search('# Everything below will be removed.\ndiff ', 'cW') - 1
+         if inline_diff_start_line ==# -1
+             return ['']
+         endif
+         return getline(inline_diff_start_line, '$')
+    else
+        return split(diff, '\n')
+    endif
 endfunction
 
 function! committia#git#status(...) abort
