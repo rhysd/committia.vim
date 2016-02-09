@@ -31,7 +31,6 @@ function! s:open_window(vcs, type, info, ft) abort
     execute 'silent' g:committia_{coltype}{a:type}_window_opencmd bufname
     let a:info[a:type . '_winnr'] = bufwinnr(bufname)
     let a:info[a:type . '_bufnr'] = bufnr('%')
-    setlocal modifiable
     call append(0, content)
     execute 0
     execute 'setlocal ft=' . a:ft
