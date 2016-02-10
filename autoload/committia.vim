@@ -141,6 +141,7 @@ function! s:open_multicolumn(vcs) abort
 
     let s:current_info = info
     setlocal bufhidden=wipe
+    let b:committia_opened = 1
     call s:set_callback_on_closed()
 endfunction
 
@@ -160,6 +161,7 @@ function! s:open_singlecolumn(vcs) abort
 
     let s:current_info = info
     setlocal bufhidden=wipe
+    let b:committia_opened = 1
     call s:set_callback_on_closed()
 endfunction
 

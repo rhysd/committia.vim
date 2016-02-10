@@ -5,7 +5,7 @@ endif
 let g:committia_open_only_vim_starting = get(g:, 'committia_open_only_vim_starting', 1)
 
 function! s:should_open(ft) abort
-    return (&ft ==# a:ft && (!g:committia_open_only_vim_starting || has('vim_starting')))
+    return &ft ==# a:ft && (!g:committia_open_only_vim_starting || has('vim_starting')) && !exists('b:committia_opened')
 endfunction
 
 augroup plugin-committia
