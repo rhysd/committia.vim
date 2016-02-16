@@ -25,7 +25,13 @@ function! s:search_git_dir() abort
 endfunction
 
 function! s:execute_git(cmd, git_dir) abort
-    return system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
+    let command = printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd)
+
+    if exists('g:loaded_vimproc')
+        return vimproc#system(command)
+    else
+        return system(command)
+    endif
 endfunction
 
 function! committia#git#diff(...) abort
