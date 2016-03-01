@@ -2,6 +2,25 @@ let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached --no-color --no-ext-diff')
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
 
+try
+    silent call vimproc#version()
+
+    " Note: vimproc exists
+    function! s:system(cmd) abort
+        return vimproc#system(a:cmd)
+    endfunction
+    function! s:error_occurred() abort
+        return vimproc#get_last_status()
+    endfunction
+catch /^Vim\%((\a\+)\)\=:E117/
+    function! s:system(cmd) abort
+        return system(a:cmd)
+    endfunction
+    function! s:error_occurred() abort
+        return v:shell_error
+    endfunction
+endtry
+
 if ! executable(g:committia#git#cmd)
     echoerr g:committia#git#cmd . " command is not found"
 endif
@@ -12,8 +31,8 @@ function! s:search_git_dir() abort
         return expand('%:p:h')
     endif
 
-    let root = matchstr(system(g:committia#git#cmd . ' rev-parse --show-cdup'),  '[^\n]\+')
-    if v:shell_error
+    let root = matchstr(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'),  '[^\n]\+')
+    if s:error_occurred()
         throw "committia: git: Failed to execute 'git rev-parse'"
     endif
 
@@ -25,7 +44,7 @@ function! s:search_git_dir() abort
 endfunction
 
 function! s:execute_git(cmd, git_dir) abort
-    return system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
+    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
 endfunction
 
 function! committia#git#diff(...) abort
@@ -46,7 +65,7 @@ function! committia#git#diff(...) abort
     endif
 
     let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
-    if v:shell_error
+    if s:error_occurred()
         throw "committia: git: Failed to execute diff command: " . diff
     endif
 
@@ -72,7 +91,7 @@ function! committia#git#status(...) abort
     endif
 
     let status = s:execute_git(g:committia#git#status_cmd, git_dir)
-    if v:shell_error
+    if s:error_occurred()
         throw "committia: git: Failed to execute status command: " . status
     endif
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
