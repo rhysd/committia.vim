@@ -1,6 +1,6 @@
 let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached --no-color --no-ext-diff')
-let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', 'status -b')
+let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', '-c color.status=false status -b')
 
 try
     silent call vimproc#version()
