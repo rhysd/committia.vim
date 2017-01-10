@@ -1,3 +1,5 @@
+let s:PATH_SEP = has('win32') || has('win64') ? '\' : '/'
+
 let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached --no-color --no-ext-diff')
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', '-c color.status=false status -b')
@@ -47,6 +49,25 @@ function! s:execute_git(cmd, git_dir) abort
     return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
 endfunction
 
+function! s:ensure_index_file(git_dir) abort
+    if $GIT_INDEX_FILE != ''
+        return 0
+    endif
+
+    let s:lock_file = s:PATH_SEP . 'index.lock'
+    if filereadable(s:lock_file)
+        let $GIT_INDEX_FILE = s:lock_file
+    else
+        let $GIT_INDEX_FILE = a:git_dir . s:PATH_SEP . 'index'
+    endif
+
+    return 1
+endfunction
+
+function! s:unset_index_file() abort
+    let $GIT_INDEX_FILE = ''
+endfunction
+
 function! committia#git#diff(...) abort
     let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
 
@@ -54,31 +75,25 @@ function! committia#git#diff(...) abort
         throw "committia: git: Failed to get git-dir"
     endif
 
-    if $GIT_INDEX_FILE == ''
-        let lock_file = git_dir . (has('win32') || has('win64') ? '\' : '/') . 'index.lock'
-        if filereadable(lock_file)
-            let $GIT_INDEX_FILE = lock_file
-        else
-            let $GIT_INDEX_FILE = git_dir . (has('win32') || has('win64') ? '\' : '/') . 'index'
+    let index_file_was_not_found = s:ensure_index_file(git_dir)
+
+    try
+        let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
+        if s:error_occurred()
+            throw "committia: git: Failed to execute diff command: " . diff
         endif
-        let index_file_was_not_found = 1
-    endif
-
-    let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
-    if s:error_occurred()
-        throw "committia: git: Failed to execute diff command: " . diff
-    endif
-
-    if exists('l:index_file_was_not_found')
-        let $GIT_INDEX_FILE = ''
-    endif
+    finally
+        if l:index_file_was_not_found
+            call s:unset_index_file()
+        endif
+    endtry
 
     if diff ==# ''
-         let inline_diff_start_line = search('# Everything below will be removed.\ndiff ', 'cW') - 1
-         if inline_diff_start_line ==# -1
-             return ['']
-         endif
-         return getline(inline_diff_start_line, '$')
+        let inline_diff_start_line = search('# Everything below will be removed.\ndiff ', 'cW') - 1
+        if inline_diff_start_line ==# -1
+            return ['']
+        endif
+        return getline(inline_diff_start_line, '$')
     else
         return split(diff, '\n')
     endif
@@ -90,7 +105,16 @@ function! committia#git#status(...) abort
         return ''
     endif
 
-    let status = s:execute_git(g:committia#git#status_cmd, git_dir)
+    let index_file_was_not_found = s:ensure_index_file(git_dir)
+
+    try
+        let status = s:execute_git(g:committia#git#status_cmd, git_dir)
+    finally
+        if l:index_file_was_not_found
+            call s:unset_index_file()
+        endif
+    endtry
+
     if s:error_occurred()
         throw "committia: git: Failed to execute status command: " . status
     endif
