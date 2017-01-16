@@ -27,13 +27,19 @@ if ! executable(g:committia#git#cmd)
     echoerr g:committia#git#cmd . " command is not found"
 endif
 
-function! s:search_git_dir() abort
+function! s:extract_first_line(str) abort
+    return matchstr(a:str, '[^\n]\+')
+endfunction
+
+function! s:search_git_dir_and_work_tree() abort
     " '/.git' is unnecessary under submodule directory.
     if expand('%:p') =~# '[\\/]\.git[\\/]\%(modules[\\/].\+[\\/]\)\?\%(COMMIT_EDITMSG\|MERGE_MSG\)$'
-        return expand('%:p:h')
+        let git_dir = expand('%:p:h')
+        let work_tree = s:extract_first_line(s:system(printf('%s --git-dir="%s" rev-parse --show-toplevel', g:committia#git#cmd, git_dir)))
+        return [git_dir, work_tree]
     endif
 
-    let root = matchstr(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'),  '[^\n]\+')
+    let root = s:extract_first_line(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'))
     if s:error_occurred()
         throw "committia: git: Failed to execute 'git rev-parse'"
     endif
@@ -42,11 +48,12 @@ function! s:search_git_dir() abort
         throw "committia: git: Failed to get git-dir from $GIT_DIR"
     endif
 
-    return root . $GIT_DIR
+    let git_dir = root . $GIT_DIR
+    return [git_dir, fnamemodify(git_dir, ':h')]
 endfunction
 
-function! s:execute_git(cmd, git_dir) abort
-    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, fnamemodify(a:git_dir, ':h'), a:cmd))
+function! s:execute_git(cmd, git_dir, work_tree) abort
+    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, a:work_tree, a:cmd))
 endfunction
 
 function! s:ensure_index_file(git_dir) abort
@@ -69,16 +76,18 @@ function! s:unset_index_file() abort
 endfunction
 
 function! committia#git#diff(...) abort
-    let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
+    let searched = s:search_git_dir_and_work_tree()
+    let git_dir = get(a:, 1, searched[0])
+    let work_tree = get(a:, 2, searched[1])
 
-    if git_dir ==# ''
-        throw "committia: git: Failed to get git-dir"
+    if git_dir ==# '' || work_tree ==# ''
+        throw "committia: git: Failed to get git-dir or work-tree"
     endif
 
     let index_file_was_not_found = s:ensure_index_file(git_dir)
 
     try
-        let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir)
+        let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir, work_tree)
         if s:error_occurred()
             throw "committia: git: Failed to execute diff command: " . diff
         endif
@@ -100,15 +109,18 @@ function! committia#git#diff(...) abort
 endfunction
 
 function! committia#git#status(...) abort
-    let git_dir = a:0 > 0 ? a:1 : s:search_git_dir()
-    if git_dir ==# ''
+    let searched = s:search_git_dir_and_work_tree()
+    let git_dir = get(a:, 1, searched[0])
+    let work_tree = get(a:, 2, searched[1])
+
+    if git_dir ==# '' || work_tree ==# ''
         return ''
     endif
 
     let index_file_was_not_found = s:ensure_index_file(git_dir)
 
     try
-        let status = s:execute_git(g:committia#git#status_cmd, git_dir)
+        let status = s:execute_git(g:committia#git#status_cmd, git_dir, work_tree)
     finally
         if l:index_file_was_not_found
             call s:unset_index_file()
