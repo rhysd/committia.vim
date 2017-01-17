@@ -24,7 +24,7 @@ catch /^Vim\%((\a\+)\)\=:E117/
 endtry
 
 if ! executable(g:committia#git#cmd)
-    echoerr g:committia#git#cmd . " command is not found"
+    echoerr g:committia#git#cmd . ' command is not found. Please check g:committia#git#cmd'
 endif
 
 function! s:extract_first_line(str) abort
@@ -37,6 +37,9 @@ function! s:search_git_dir_and_work_tree() abort
     if len(matched) > 1
         let git_dir = expand('%:p:h')
         if matched[1] ==# 'worktrees'
+            " Note:
+            " This was added in #31. I'm not sure that the format of gitdir file
+            " is fixed. Anyway, it works for now.
             let work_tree = fnamemodify(readfile(git_dir . '/gitdir')[0], ':h')
         else
             let work_tree = s:extract_first_line(s:system(printf('%s --git-dir="%s" rev-parse --show-toplevel', g:committia#git#cmd, git_dir)))
@@ -44,16 +47,17 @@ function! s:search_git_dir_and_work_tree() abort
         return [git_dir, work_tree]
     endif
 
-    let root = s:extract_first_line(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'))
+    let output = s:system(g:committia#git#cmd . ' rev-parse --show-cdup')
     if s:error_occurred()
-        throw "committia: git: Failed to execute 'git rev-parse'"
+        throw "committia: git: Failed to execute 'git rev-parse': " . output
     endif
+    let root = s:extract_first_line(output)
 
-    if !isdirectory(root . $GIT_DIR)
+    let git_dir = root . $GIT_DIR
+    if !isdirectory(git_dir)
         throw "committia: git: Failed to get git-dir from $GIT_DIR"
     endif
 
-    let git_dir = root . $GIT_DIR
     return [git_dir, fnamemodify(git_dir, ':h')]
 endfunction
 
@@ -90,12 +94,12 @@ function! committia#git#diff() abort
     let index_file_was_not_found = s:ensure_index_file(git_dir)
 
     try
-        let diff =  s:execute_git(g:committia#git#diff_cmd, git_dir, work_tree)
+        let diff = s:execute_git(g:committia#git#diff_cmd, git_dir, work_tree)
         if s:error_occurred()
             throw "committia: git: Failed to execute diff command: " . diff
         endif
     finally
-        if l:index_file_was_not_found
+        if index_file_was_not_found
             call s:unset_index_file()
         endif
     endtry
@@ -123,7 +127,7 @@ function! committia#git#status() abort
     try
         let status = s:execute_git(g:committia#git#status_cmd, git_dir, work_tree)
     finally
-        if l:index_file_was_not_found
+        if index_file_was_not_found
             call s:unset_index_file()
         endif
     endtry
