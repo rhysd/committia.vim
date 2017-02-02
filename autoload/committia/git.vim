@@ -28,7 +28,7 @@ if ! executable(g:committia#git#cmd)
 endif
 
 function! s:extract_first_line(str) abort
-    return matchstr(a:str, '[^\n]\+')
+    return matchstr(a:str, '[^\n\r]\+')
 endfunction
 
 function! s:search_git_dir_and_work_tree() abort
