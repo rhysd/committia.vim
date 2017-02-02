@@ -28,7 +28,15 @@ if ! executable(g:committia#git#cmd)
 endif
 
 function! s:extract_first_line(str) abort
-    return matchstr(a:str, '[^\n\r]\+')
+    let i = stridx(a:str, "\r")
+    if i >= 0
+        return a:str[: i - 1]
+    endif
+    let i = stridx(a:str, "\n")
+    if i >= 0
+        return a:str[: i - 1]
+    endif
+    return a:str
 endfunction
 
 function! s:search_git_dir_and_work_tree() abort
