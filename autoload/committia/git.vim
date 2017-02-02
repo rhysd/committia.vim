@@ -29,11 +29,11 @@ endif
 
 function! s:extract_first_line(str) abort
     let i = stridx(a:str, "\r")
-    if i >= 0
+    if i > 0
         return a:str[: i - 1]
     endif
     let i = stridx(a:str, "\n")
-    if i >= 0
+    if i > 0
         return a:str[: i - 1]
     endif
     return a:str
