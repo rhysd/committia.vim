@@ -11,11 +11,11 @@ falls back to single column mode, which has 2 windows; edit window and diff wind
 
 For wide window:
 
-![double column mode](https://dl.dropboxusercontent.com/u/2753138/screenshot_committia.jpg)
+![double column mode](https://github.com/rhysd/ss/blob/master/committia.vim/main.jpg?raw=true)
 
 For narrow window:
 
-![single column mode](https://dl.dropboxusercontent.com/u/2753138/screenshot_committia_narrow.jpg)
+![single column mode](https://github.com/rhysd/ss/blob/master/committia.vim/narrow.jpg?raw=true)
 
 ## Hooks
 
