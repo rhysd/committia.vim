@@ -23,7 +23,7 @@ catch /^Vim\%((\a\+)\)\=:E117/
     endfunction
 endtry
 
-if ! executable(g:committia#git#cmd)
+if !executable(g:committia#git#cmd)
     echoerr g:committia#git#cmd . ' command is not found. Please check g:committia#git#cmd'
 endif
 
@@ -50,7 +50,8 @@ function! s:search_git_dir_and_work_tree() abort
             " is fixed. Anyway, it works for now.
             let work_tree = fnamemodify(readfile(git_dir . '/gitdir')[0], ':h')
         else
-            let work_tree = s:extract_first_line(s:system(printf('%s --git-dir="%s" rev-parse --show-toplevel', g:committia#git#cmd, git_dir)))
+            let work_tree = s:extract_first_line(s:system(printf('%s --git-dir="%s" rev-parse --show-toplevel', g:committia#git#cmd, escape(git_dir, '\'))))
+            " TODO: Handle command error
         endif
         return [git_dir, work_tree]
     endif
@@ -70,7 +71,7 @@ function! s:search_git_dir_and_work_tree() abort
 endfunction
 
 function! s:execute_git(cmd, git_dir, work_tree) abort
-    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, a:git_dir, a:work_tree, a:cmd))
+    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, escape(a:git_dir, '\'), escape(a:work_tree, '\'), a:cmd))
 endfunction
 
 function! s:ensure_index_file(git_dir) abort
