@@ -148,5 +148,5 @@ function! committia#git#status() abort
 endfunction
 
 function! committia#git#search_end_of_edit_region() abort
-    call search('\m\%(\_^\s*\_$\n\)*\_^\s*# Please enter \%(the\|a\) commit', 'cW')
+    call search('\m\%(\_^\s*\_$\n\)*\_^# ', 'cW')
 endfunction
