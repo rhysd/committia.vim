@@ -113,15 +113,16 @@ function! committia#git#diff() abort
         endif
     endtry
 
-    if diff ==# ''
-        let inline_diff_start_line = search('# Everything below will be removed.\ndiff ', 'cW') - 1
-        if inline_diff_start_line ==# -1
-            return ['']
-        endif
-        return getline(inline_diff_start_line, '$')
-    else
+    if diff !=# ''
         return split(diff, '\n')
     endif
+
+    let inline_diff_start_line = search('# Everything below will be removed.\ndiff ', 'cnW') - 1
+    if inline_diff_start_line ==# -1
+        return ['']
+    endif
+
+    return getline(inline_diff_start_line, '$')
 endfunction
 
 function! committia#git#status() abort
