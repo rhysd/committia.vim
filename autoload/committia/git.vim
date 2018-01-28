@@ -117,7 +117,7 @@ function! committia#git#diff() abort
         return split(diff, '\n')
     endif
 
-    let re_start_diff_line = '# -\+ >8 -\+\n\_.\+\ndiff --git'
+    let re_start_diff_line = '# -\+ >8 -\+\n\%(#.*\n\)\+diff --git'
     let inline_diff_start_line = search(re_start_diff_line, 'cenW')
     if inline_diff_start_line ==# -1
         return ['']
