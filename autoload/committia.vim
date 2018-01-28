@@ -176,6 +176,13 @@ function! committia#open(vcs) abort
         return
     endif
 
+    " When opening a commit buffer with --amend flag, Vim tries to move the
+    " cursor to the previous position. Detect it and reset the cursor
+    " position.
+    if line('.') != 1
+        keepjumps call cursor(1, 1)
+    endif
+
     if use_singlecolumn
         call s:open_singlecolumn(a:vcs)
     else
