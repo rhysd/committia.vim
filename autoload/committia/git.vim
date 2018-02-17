@@ -117,13 +117,17 @@ function! committia#git#diff() abort
         return split(diff, '\n')
     endif
 
-    let re_start_diff_line = '# -\+ >8 -\+\n\%(#.*\n\)\+diff --git'
-    let inline_diff_start_line = search(re_start_diff_line, 'cenW')
-    if inline_diff_start_line ==# -1
+    let line = s:diff_start_line()
+    if line == -1
         return ['']
     endif
 
-    return getline(inline_diff_start_line, '$')
+    return getline(line, '$')
+endfunction
+
+function! s:diff_start_line() abort
+    let re_start_diff_line = '# -\+ >8 -\+\n\%(#.*\n\)\+diff --git'
+    return search(re_start_diff_line, 'cenW')
 endfunction
 
 function! committia#git#status() abort
@@ -149,6 +153,16 @@ function! committia#git#status() abort
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
 
-function! committia#git#search_end_of_edit_region() abort
-    call search('\m\%(\_^\s*\_$\n\)*\_^# ', 'cW')
+function! committia#git#end_of_edit_region_line() abort
+    let line = s:diff_start_line()
+    if line == -1
+        return 1
+    endif
+    while line > 1
+        if stridx(getline(line - 1), '#') != 0
+            break
+        endif
+        let line -= 1
+    endwhile
+    return line
 endfunction

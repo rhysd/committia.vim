@@ -67,11 +67,11 @@ function! s:execute_hook(name, info) abort
 endfunction
 
 function! s:remove_all_contents_except_for_commit_message(vcs) abort
-    execute 1
+    1
     " Handle squash message
-    call call('committia#' . a:vcs . '#search_end_of_edit_region', [])
-    silent normal! "_dG
-    execute 1
+    let line = call('committia#' . a:vcs . '#end_of_edit_region_line', [])
+    execute 'silent' line . ',$ delete _'
+    1
     vertical resize 80
 endfunction
 
