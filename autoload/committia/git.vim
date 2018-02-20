@@ -9,17 +9,19 @@ try
 
     " Note: vimproc exists
     function! s:system(cmd) abort
-        return vimproc#system(a:cmd)
-    endfunction
-    function! s:error_occurred() abort
-        return vimproc#get_last_status()
+        let out = vimproc#system(a:cmd)
+        if vimproc#get_last_status()
+            throw printf("Failed to execute command '%s': %s", a:cmd, out)
+        endif
+        return out
     endfunction
 catch /^Vim\%((\a\+)\)\=:E117/
     function! s:system(cmd) abort
-        return system(a:cmd)
-    endfunction
-    function! s:error_occurred() abort
-        return v:shell_error
+        let out = system(a:cmd)
+        if v:shell_error
+            throw printf("Failed to execute command '%s': %s", a:cmd, out)
+        endif
+        return out
     endfunction
 endtry
 
@@ -65,9 +67,6 @@ function! s:search_git_dir_and_work_tree() abort
         try
             let cmd = printf('%s --git-dir="%s" rev-parse --show-toplevel', g:committia#git#cmd, escape(git_dir, '\'))
             let out = s:system(cmd)
-            if s:error_occurred()
-                throw "Failed to execute 'git rev-parse --show-cdup': " . out
-            endif
         finally
             if cwd_saved !=# getcwd()
                 execute 'lcd' cwd_saved
@@ -78,11 +77,7 @@ function! s:search_git_dir_and_work_tree() abort
         return [git_dir, work_tree]
     endif
 
-    let output = s:system(g:committia#git#cmd . ' rev-parse --show-cdup')
-    if s:error_occurred()
-        throw "Failed to execute 'git rev-parse --show-cdup': " . output
-    endif
-    let root = s:extract_first_line(output)
+    let root = s:extract_first_line(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'))
 
     let git_dir = root . $GIT_DIR
     if !isdirectory(git_dir)
@@ -103,16 +98,16 @@ function! s:execute_git(cmd) abort
         throw 'committia: git: Failed to retrieve git-dir or work-tree'
     endif
 
-    let index_file_was_not_found = s:ensure_index_file(git_dir)
+    let index_file_was_set = s:ensure_index_file(git_dir)
     try
         let cmd = printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, escape(git_dir, '\'), escape(work_tree, '\'), a:cmd)
-        let out = s:system(cmd)
-        if s:error_occurred()
-            throw printf("committia: git: Failed to execute Git command '%s': %s", a:cmd, out)
-        endif
-        return out
+        try
+            return s:system(cmd)
+        catch
+            throw 'committia: git: ' . v:exception
+        endtry
     finally
-        if index_file_was_not_found
+        if index_file_was_set
             call s:unset_index_file()
         endif
     endtry
@@ -123,9 +118,9 @@ function! s:ensure_index_file(git_dir) abort
         return 0
     endif
 
-    let s:lock_file = s:PATH_SEP . 'index.lock'
-    if filereadable(s:lock_file)
-        let $GIT_INDEX_FILE = s:lock_file
+    let lock_file = s:PATH_SEP . 'index.lock'
+    if filereadable(lock_file)
+        let $GIT_INDEX_FILE = lock_file
     else
         let $GIT_INDEX_FILE = a:git_dir . s:PATH_SEP . 'index'
     endif
