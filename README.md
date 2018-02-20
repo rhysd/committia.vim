@@ -1,13 +1,15 @@
 More Pleasant Editing on Commit Message
 =======================================
 
-When you type `git commit`, Vim starts and opens a commit buffer.  This plugin improves
+When you type `git commit`, Vim starts and opens a commit buffer. This plugin improves
 the commit buffer.
 
 committia.vim splits the buffer into 3 windows; edit window, status window and diff window.
-You no longer need to repeat scroll and back to the former position in order to see a long
-commit diff.  If the width of Vim window is too narrow (160 characters by default), committia.vim
-falls back to single column mode, which has 2 windows; edit window and diff window.
+You no longer need to repeat moving to another window, scrolling and backing to the former
+position in order to see a long commit diff.
+
+If the width of Vim window is too narrow (160 characters by default), committia.vim falls back
+to single column mode, which has 2 windows; edit window and diff window.
 
 For wide window:
 
@@ -86,7 +88,9 @@ Some variables are available to control the behavior of committia.vim.
 
 - `g:committia_open_only_vim_starting`
 
-If the value is `0`, committia.vim always attempts to open committia's buffer when `COMMIT_EDITMSG` buffer is opened.  If you use [vim-fugitive](https://github.com/tpope/vim-fugitive), I recommend to set this value to `1`.  The default value is `1`.
+If the value is `0`, committia.vim always attempts to open committia's buffer when `COMMIT_EDITMSG`
+buffer is opened. If you use [vim-fugitive](https://github.com/tpope/vim-fugitive), I recommend to
+set this value to `1`.  The default value is `1`.
 
 - `g:committia_use_singlecolumn`
 
@@ -94,7 +98,8 @@ If the value is `'always'`, committia.vim always employs single column mode.
 
 - `g:committia_min_window_width`
 
-If the width of window is narrower than the value, committia.vim employs single column mode.  The default value is `160`.
+If the width of window is narrower than the value, committia.vim employs single column mode.
+The default value is `160`.
 
 ## Future
 
