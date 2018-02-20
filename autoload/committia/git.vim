@@ -58,23 +58,27 @@ function! s:search_git_dir_and_work_tree() abort
 
     let output = s:system(g:committia#git#cmd . ' rev-parse --show-cdup')
     if s:error_occurred()
-        throw "committia: git: Failed to execute 'git rev-parse': " . output
+        throw "Failed to execute 'git rev-parse': " . output
     endif
     let root = s:extract_first_line(output)
 
     let git_dir = root . $GIT_DIR
     if !isdirectory(git_dir)
-        throw "committia: git: Failed to get git-dir from $GIT_DIR"
+        throw 'Failed to get git-dir from $GIT_DIR'
     endif
 
     return [git_dir, fnamemodify(git_dir, ':h')]
 endfunction
 
 function! s:execute_git(cmd) abort
-    let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
+    try
+        let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
+    catch
+        throw 'committia: git: Failed to retrieve git-dir or work-tree: ' . v:exception
+    endtry
 
     if git_dir ==# '' || work_tree ==# ''
-        throw 'committia: git: Failed to get git-dir or work-tree'
+        throw 'committia: git: Failed to retrieve git-dir or work-tree'
     endif
 
     let index_file_was_not_found = s:ensure_index_file(git_dir)
@@ -134,7 +138,7 @@ endfunction
 function! committia#git#status() abort
     try
         let status = s:execute_git(g:committia#git#status_cmd)
-    catch /^committia: git: Failed to get git-dir or work-tree$/
+    catch /^committia: git: Failed to retrieve git-dir or work-tree/
         " Leave status window empty when git-dir or work-tree not found
         return ''
     endtry
