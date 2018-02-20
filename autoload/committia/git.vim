@@ -70,8 +70,26 @@ function! s:search_git_dir_and_work_tree() abort
     return [git_dir, fnamemodify(git_dir, ':h')]
 endfunction
 
-function! s:execute_git(cmd, git_dir, work_tree) abort
-    return s:system(printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, escape(a:git_dir, '\'), escape(a:work_tree, '\'), a:cmd))
+function! s:execute_git(cmd) abort
+    let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
+
+    if git_dir ==# '' || work_tree ==# ''
+        throw 'committia: git: Failed to get git-dir or work-tree'
+    endif
+
+    let index_file_was_not_found = s:ensure_index_file(git_dir)
+    try
+        let cmd = printf('%s --git-dir="%s" --work-tree="%s" %s', g:committia#git#cmd, escape(git_dir, '\'), escape(work_tree, '\'), a:cmd)
+        let out = s:system(cmd)
+        if s:error_occurred()
+            throw printf("committia: git: Failed to execute Git command '%s': %s", a:cmd, out)
+        endif
+        return out
+    finally
+        if index_file_was_not_found
+            call s:unset_index_file()
+        endif
+    endtry
 endfunction
 
 function! s:ensure_index_file(git_dir) abort
@@ -94,24 +112,7 @@ function! s:unset_index_file() abort
 endfunction
 
 function! committia#git#diff() abort
-    let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
-
-    if git_dir ==# '' || work_tree ==# ''
-        throw "committia: git: Failed to get git-dir or work-tree"
-    endif
-
-    let index_file_was_not_found = s:ensure_index_file(git_dir)
-
-    try
-        let diff = s:execute_git(g:committia#git#diff_cmd, git_dir, work_tree)
-        if s:error_occurred()
-            throw "committia: git: Failed to execute diff command: " . diff
-        endif
-    finally
-        if index_file_was_not_found
-            call s:unset_index_file()
-        endif
-    endtry
+    let diff = s:execute_git(g:committia#git#diff_cmd)
 
     if diff !=# ''
         return split(diff, '\n')
@@ -131,25 +132,12 @@ function! s:diff_start_line() abort
 endfunction
 
 function! committia#git#status() abort
-    let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
-
-    if git_dir ==# '' || work_tree ==# ''
-        return ''
-    endif
-
-    let index_file_was_not_found = s:ensure_index_file(git_dir)
-
     try
-        let status = s:execute_git(g:committia#git#status_cmd, git_dir, work_tree)
-    finally
-        if index_file_was_not_found
-            call s:unset_index_file()
-        endif
+        let status = s:execute_git(g:committia#git#status_cmd)
+    catch /^committia: git: Failed to get git-dir or work-tree$/
+        " Leave status window empty when git-dir or work-tree not found
+        return ''
     endtry
-
-    if s:error_occurred()
-        throw "committia: git: Failed to execute status command: " . status
-    endif
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
 
