@@ -165,7 +165,10 @@ endfunction
 function! committia#git#end_of_edit_region_line() abort
     let line = s:diff_start_line()
     if line == 0
-        return 1
+        " If diff is not contained, assumes that the buffer ends with comment
+        " block which was automatically inserted by Git.
+        " Only the comment block will be removed from edit buffer. (#41)
+        let line = line('$')
     endif
     while line > 1
         if stridx(getline(line - 1), '#') != 0
