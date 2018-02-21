@@ -140,7 +140,7 @@ function! committia#git#diff() abort
     endif
 
     let line = s:diff_start_line()
-    if line == -1
+    if line == 0
         return ['']
     endif
 
@@ -164,7 +164,7 @@ endfunction
 
 function! committia#git#end_of_edit_region_line() abort
     let line = s:diff_start_line()
-    if line == -1
+    if line == 0
         return 1
     endif
     while line > 1
