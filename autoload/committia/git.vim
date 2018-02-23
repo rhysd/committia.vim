@@ -1,4 +1,14 @@
-let s:PATH_SEP = has('win32') || has('win64') ? '\' : '/'
+if has('win32') || has('win64')
+    let s:PATH_SEP =  '\'
+    function! s:is_absolute_path(path) abort
+        return a:path =~# '^[a-zA-Z]:[/\\]'
+    endfunction
+else
+    let s:PATH_SEP =  '/'
+    function! s:is_absolute_path(path) abort
+        return a:path[0] ==# '/'
+    endfunction
+endif
 
 let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached --no-color --no-ext-diff')
@@ -77,11 +87,15 @@ function! s:search_git_dir_and_work_tree() abort
         return [git_dir, work_tree]
     endif
 
-    let root = s:extract_first_line(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'))
+    if s:is_absolute_path($GIT_DIR) && isdirectory($GIT_DIR)
+        let git_dir = $GIT_DIR
+    else
+        let root = s:extract_first_line(s:system(g:committia#git#cmd . ' rev-parse --show-cdup'))
 
-    let git_dir = root . $GIT_DIR
-    if !isdirectory(git_dir)
-        throw 'Failed to get git-dir from $GIT_DIR'
+        let git_dir = root . $GIT_DIR
+        if !isdirectory(git_dir)
+            throw 'Failed to get git-dir from $GIT_DIR'
+        endif
     endif
 
     return [git_dir, fnamemodify(git_dir, ':h')]
