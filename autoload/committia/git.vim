@@ -44,6 +44,9 @@ endfunction
 function! s:search_git_dir_and_work_tree() abort
     " Use environment variables if set
     if !empty($GIT_DIR) && !empty($GIT_WORK_TREE)
+        if !isdirectory($GIT_WORK_TREE)
+            throw 'Directory specified with $GIT_WORK_TREE does not exist: ' . $GIT_WORK_TREE
+        endif
         return [$GIT_DIR, $GIT_WORK_TREE]
     endif
 
