@@ -52,6 +52,14 @@ function! s:extract_first_line(str) abort
 endfunction
 
 function! s:search_git_dir_and_work_tree() abort
+    " Use environment variables if set
+    if !empty($GIT_DIR) && !empty($GIT_WORK_TREE)
+        if !isdirectory($GIT_WORK_TREE)
+            throw 'Directory specified with $GIT_WORK_TREE does not exist: ' . $GIT_WORK_TREE
+        endif
+        return [$GIT_DIR, $GIT_WORK_TREE]
+    endif
+
     " '/.git' is unnecessary under submodule directory.
     let matched = matchlist(expand('%:p'), '[\\/]\.git[\\/]\%(\(modules\|worktrees\)[\\/].\+[\\/]\)\?\%(COMMIT_EDITMSG\|MERGE_MSG\)$')
     if len(matched) > 1
