@@ -122,7 +122,7 @@ function! s:set_callback_on_closed() abort
     augroup END
 endfunction
 
-function! s:open_multicolumn(vcs) abort
+function! committia#open_multicolumn(vcs) abort
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 0}
 
     let diff_window_opened = s:open_diff_window(a:vcs, info)
@@ -145,7 +145,7 @@ function! s:open_multicolumn(vcs) abort
     call s:set_callback_on_closed()
 endfunction
 
-function! s:open_singlecolumn(vcs) abort
+function! committia#open_singlecolumn(vcs) abort
     let info = {'vcs' : a:vcs, 'edit_winnr' : winnr(), 'edit_bufnr' : bufnr('%'), 'singlecolumn' : 1}
 
     let diff_window_opened = s:open_diff_window(a:vcs, info)
@@ -184,9 +184,9 @@ function! committia#open(vcs) abort
     endif
 
     if use_singlecolumn
-        call s:open_singlecolumn(a:vcs)
+        call committia#open_singlecolumn(a:vcs)
     else
-        call s:open_multicolumn(a:vcs)
+        call committia#open_multicolumn(a:vcs)
     endif
 endfunction
 
