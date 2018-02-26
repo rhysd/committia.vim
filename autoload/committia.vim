@@ -70,7 +70,7 @@ function! s:remove_all_contents_except_for_commit_message(vcs) abort
     1
     " Handle squash message
     let line = call('committia#' . a:vcs . '#end_of_edit_region_line', [])
-    execute 'silent' line . ',$ delete _'
+    execute 'silent' line . ',$delete _'
     1
     vertical resize 80
 endfunction
