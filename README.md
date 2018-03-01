@@ -58,45 +58,35 @@ function! g:committia_hooks.edit_open(info)
     " Map <C-n> and <C-p>
     imap <buffer><C-n> <Plug>(committia-scroll-diff-down-half)
     imap <buffer><C-p> <Plug>(committia-scroll-diff-up-half)
-
 endfunction
 ```
 
 ## Mappings
 
-Scroll mappings for insert mode are available.
+Mappings to scroll diff window for insert mode are available.
 
-- `<Plug>(committia-scroll-diff-down-half)`
-
-Scroll down the diff window by half a screen.
-
-- `<Plug>(committia-scroll-diff-up-half)`
-
-Scroll up the diff window by half a screen.
-
-- `<Plug>(committia-scroll-diff-down-page)`
-
-Scroll down the diff window by a screen.
-
-- `<Plug>(committia-scroll-diff-up-page)`
-
-Scroll up the diff window by a screen.
+| Mapping                                   | Description                                   |
+|-------------------------------------------|-----------------------------------------------|
+| `<Plug>(committia-scroll-diff-down-half)` | Scroll down the diff window by half a screen. |
+| `<Plug>(committia-scroll-diff-up-half)`   | Scroll up the diff window by half a screen.   |
+| `<Plug>(committia-scroll-diff-down-page)` | Scroll down the diff window by a screen.      |
+| `<Plug>(committia-scroll-diff-up-page)`   | Scroll up the diff window by a screen.        |
 
 ## Variables
 
 Some variables are available to control the behavior of committia.vim.
 
-- `g:committia_open_only_vim_starting`
+### `g:committia_open_only_vim_starting`
 
 If the value is `0`, committia.vim always attempts to open committia's buffer when `COMMIT_EDITMSG`
 buffer is opened. If you use [vim-fugitive](https://github.com/tpope/vim-fugitive), I recommend to
 set this value to `1`.  The default value is `1`.
 
-- `g:committia_use_singlecolumn`
+### `g:committia_use_singlecolumn`
 
 If the value is `'always'`, committia.vim always employs single column mode.
 
-- `g:committia_min_window_width`
+### `g:committia_min_window_width`
 
 If the width of window is narrower than the value, committia.vim employs single column mode.
 The default value is `160`.
@@ -110,6 +100,8 @@ The default value is `160`.
 ## Contribution
 
 - [@uasi](https://github.com/uasi) : single column mode
+- [@anekos](https://github.com/uasi) : submodule and worktree support
+- [and more contributors who sent a patch](https://github.com/rhysd/committia.vim/graphs/contributors)
 
 ## License
 
