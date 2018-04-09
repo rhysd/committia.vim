@@ -198,5 +198,9 @@ function! committia#git#end_of_edit_region_line() abort
         endif
         let line -= 1
     endwhile
+    if line > 1 && empty(getline(line - 1))
+        " Drop empty line before comment block.
+        let line -= 1
+    endif
     return line
 endfunction
