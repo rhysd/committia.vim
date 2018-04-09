@@ -32,6 +32,8 @@ function! s:open_window(vcs, type, info, ft) abort
     let a:info[a:type . '_winnr'] = bufwinnr(bufname)
     let a:info[a:type . '_bufnr'] = bufnr('%')
     call append(0, content)
+    " Remove the line which is part of an empty buffer.
+    $delete _
     execute 0
     execute 'setlocal ft=' . a:ft
     setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified
