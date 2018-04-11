@@ -76,20 +76,31 @@ Mappings to scroll diff window for insert mode are available.
 
 Some variables are available to control the behavior of committia.vim.
 
-### `g:committia_open_only_vim_starting`
+### `g:committia_open_only_vim_starting` (default: `1`)
 
 If the value is `0`, committia.vim always attempts to open committia's buffer when `COMMIT_EDITMSG`
 buffer is opened. If you use [vim-fugitive](https://github.com/tpope/vim-fugitive), I recommend to
-set this value to `1`.  The default value is `1`.
+set this value to `1`.
 
-### `g:committia_use_singlecolumn`
+### `g:committia_use_singlecolumn` (default: `'fallback'`)
 
 If the value is `'always'`, committia.vim always employs single column mode.
 
-### `g:committia_min_window_width`
+### `g:committia_min_window_width` (default: `160`)
 
 If the width of window is narrower than the value, committia.vim employs single column mode.
-The default value is `160`.
+
+### `g:committia_status_window_opencmd` (default: `'belowright split'`)
+
+Vim command which opens a status window in multi-columns mode.
+
+### `g:committia_diff_window_opencmd` (default: `'botright vsplit'`)
+
+Vim command which opens a diff window in multi-columns mode.
+
+### `g:committia_singlecolumn_diff_window_opencmd` (default: `'belowright split'`)
+
+Vim command which opens a diff window in single-columns mode.
 
 ## Future
 
