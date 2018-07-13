@@ -42,7 +42,7 @@ endfunction
 " the original window.
 " It returns 0 if the window is not open, othewise 1
 function! s:open_diff_window(vcs, info) abort
-    call s:open_window(a:vcs, 'diff', a:info, 'diff')
+    call s:open_window(a:vcs, 'diff', a:info, 'git')
     if getline(1, '$') ==# ['']
         execute a:info.diff_winnr . 'wincmd c'
         wincmd p
