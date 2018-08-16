@@ -25,9 +25,11 @@ You can hook on opening the windows.
 
 Available hooks are:
 
-- `edit_open`
-- `diff_open`
-- `status_open`
+- `edit_open`: When opening a commit message window, this hook is called from the window.
+- `diff_open`: When opening a diff window, this hook is called from the window.
+- `status_open`: When opening a status window, this hook is called from the window.
+  Please note that this hook is not called on single-column mode since it does not have a dedicated
+  window for status.
 
 A vimrc example is below.
 
@@ -52,7 +54,7 @@ function! g:committia_hooks.edit_open(info)
     " If no commit message, start with insert mode
     if a:info.vcs ==# 'git' && getline(1) ==# ''
         startinsert
-    end
+    endif
 
     " Scroll the diff window from insert mode
     " Map <C-n> and <C-p>
@@ -100,7 +102,7 @@ Vim command which opens a diff window in multi-columns mode.
 
 ### `g:committia_singlecolumn_diff_window_opencmd` (default: `'belowright split'`)
 
-Vim command which opens a diff window in single-columns mode.
+Vim command which opens a diff window in single-column mode.
 
 ## Future
 
