@@ -34,7 +34,7 @@ function! s:open_window(vcs, type, info, ft) abort
     call setline(1, content)
     execute 0
     execute 'setlocal ft=' . a:ft
-    setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified
+    setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified nofoldenable
 endfunction
 
 
