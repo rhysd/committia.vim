@@ -109,9 +109,9 @@ function! committia#scroll_window(type, cmd) abort
     if target_winnr == -1
         return
     endif
-    execute target_winnr . 'wincmd w'
-    execute 'normal!' s:get_map_of(a:cmd)
-    wincmd p
+    noautocmd execute target_winnr . 'wincmd w'
+    noautocmd execute 'normal!' s:get_map_of(a:cmd)
+    noautocmd wincmd p
 endfunction
 
 function! s:set_callback_on_closed() abort
