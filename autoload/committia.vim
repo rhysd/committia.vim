@@ -3,6 +3,7 @@ set cpo&vim
 
 let g:committia_use_singlecolumn = get(g:, 'committia_use_singlecolumn', 'fallback')
 let g:committia_min_window_width = get(g:, 'committia_min_window_width', 160)
+let g:committia_edit_window_width = get(g:, 'committia_edit_window_width', 80)
 let g:committia_diff_window_opencmd = get(g:, 'committia_diff_window_opencmd', 'botright vsplit')
 let g:committia_status_window_opencmd = get(g:, 'committia_status_window_opencmd', 'belowright split')
 let g:committia_singlecolumn_diff_window_opencmd = get(g:, 'committia_singlecolumn_diff_window_opencmd', 'belowright split')
@@ -74,7 +75,7 @@ function! s:remove_all_contents_except_for_commit_message(vcs) abort
         execute 'silent' line . ',$delete _'
     endif
     1
-    vertical resize 80
+    execute 'vertical resize' g:committia_edit_window_width
 endfunction
 
 function! s:callback_on_window_closed() abort
