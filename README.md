@@ -104,6 +104,10 @@ Vim command which opens a diff window in multi-columns mode.
 
 Vim command which opens a diff window in single-column mode.
 
+### `g:committia_edit_window_width` (default: `80`)
+
+If committia.vim is in multi-columns mode, specifies the width of the edit window.
+
 ## Future
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
