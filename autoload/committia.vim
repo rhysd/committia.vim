@@ -8,6 +8,7 @@ let g:committia_diff_window_opencmd = get(g:, 'committia_diff_window_opencmd', '
 let g:committia_status_window_opencmd = get(g:, 'committia_status_window_opencmd', 'belowright split')
 let g:committia_singlecolumn_diff_window_opencmd = get(g:, 'committia_singlecolumn_diff_window_opencmd', 'belowright split')
 let g:committia_hooks = get(g:, 'committia_hooks', {})
+let g:committia_diff_window_filetype = get(g:, 'committia_diff_window_filetype', '')
 
 inoremap <silent> <Plug>(committia-scroll-diff-down-half) <C-o>:call committia#scroll_window('diff', 'C-d')<CR>
 inoremap <silent> <Plug>(committia-scroll-diff-up-half) <C-o>:call committia#scroll_window('diff', 'C-u')<CR>
@@ -34,7 +35,15 @@ function! s:open_window(vcs, type, info, ft) abort
     let a:info[a:type . '_bufnr'] = bufnr('%')
     call setline(1, content)
     execute 0
-    execute 'setlocal ft=' . a:ft
+    if g:committia_diff_window_filetype ==# ''
+      if a:vcs ==# 'perforce'
+        execute 'setlocal ft=diff'
+      else
+        execute 'setlocal ft=' . a:ft
+      endif
+    else
+      execute 'setlocal ft=' . g:committia_diff_window_filetype
+    endif
     setlocal nonumber bufhidden=wipe buftype=nofile readonly nolist nobuflisted noswapfile nomodifiable nomodified nofoldenable
 endfunction
 

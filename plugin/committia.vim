@@ -12,6 +12,8 @@ augroup plugin-committia
     autocmd!
     autocmd BufReadPost COMMIT_EDITMSG,MERGE_MSG if s:should_open('gitcommit') | call committia#open('git') | endif
 
+    autocmd BufReadPost * if s:should_open('perforce') && get(g:, "committia_perforce_change_filetype", 0) | let g:committia_use_singlecolumn = 'always' | call committia#open('perforce') | endif
+
     " ... Add other VCSs' commit editor filetypes
 augroup END
 
