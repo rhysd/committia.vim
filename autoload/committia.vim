@@ -13,14 +13,14 @@ inoremap <silent> <Plug>(committia-scroll-diff-down-half) <C-o>:call committia#s
 inoremap <silent> <Plug>(committia-scroll-diff-up-half) <C-o>:call committia#scroll_window('diff', 'C-u')<CR>
 inoremap <silent> <Plug>(committia-scroll-diff-down-page) <C-o>:call committia#scroll_window('diff', 'C-f')<CR>
 inoremap <silent> <Plug>(committia-scroll-diff-up-page) <C-o>:call committia#scroll_window('diff', 'C-b')<CR>
-inoremap <silent> <Plug>(committia-scroll-diff-down) <C-o>:call committia#scroll_window('diff', 'j')<CR>
-inoremap <silent> <Plug>(committia-scroll-diff-up) <C-o>:call committia#scroll_window('diff', 'k')<CR>
+inoremap <silent> <Plug>(committia-scroll-diff-down) <C-o>:call committia#scroll_window('diff', 'C-e')<CR>
+inoremap <silent> <Plug>(committia-scroll-diff-up) <C-o>:call committia#scroll_window('diff', 'C-y')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-down-half) :<C-u>call committia#scroll_window('diff', 'C-d')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-up-half) :<C-u>call committia#scroll_window('diff', 'C-u')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-down-page) :<C-u>call committia#scroll_window('diff', 'C-f')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-up-page) :<C-u>call committia#scroll_window('diff', 'C-b')<CR>
-nnoremap <silent> <Plug>(committia-scroll-diff-down) :<C-u>call committia#scroll_window('diff', 'j')<CR>
-nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_window('diff', 'k')<CR>
+nnoremap <silent> <Plug>(committia-scroll-diff-down) :<C-u>call committia#scroll_window('diff', 'C-e')<CR>
+nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_window('diff', 'C-y')<CR>
 
 let s:current_info = {}
 
