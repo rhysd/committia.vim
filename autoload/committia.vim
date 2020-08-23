@@ -102,7 +102,7 @@ function! s:callback_on_window_closed_workaround() abort
 endfunction
 
 function! s:get_map_of(cmd) abort
-    if strlen(a:cmd) == 1
+    if stridx(a:cmd, '-') == -1
         return a:cmd
     endif
     return eval('"\<' . a:cmd . '>"')
