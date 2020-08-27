@@ -73,6 +73,8 @@ Mappings to scroll diff window for insert mode are available.
 | `<Plug>(committia-scroll-diff-up-half)`   | Scroll up the diff window by half a screen.   |
 | `<Plug>(committia-scroll-diff-down-page)` | Scroll down the diff window by a screen.      |
 | `<Plug>(committia-scroll-diff-up-page)`   | Scroll up the diff window by a screen.        |
+| `<Plug>(committia-scroll-diff-down)`      | Scroll down the diff window by one line.      |
+| `<Plug>(committia-scroll-diff-up)`        | Scroll up the diff window by one line.        |
 
 ## Variables
 
