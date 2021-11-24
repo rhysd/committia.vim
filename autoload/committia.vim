@@ -55,8 +55,8 @@ endfunction
 function! s:open_status_window(vcs, info) abort
     call s:open_window(a:vcs, 'status', a:info, 'gitcommit')
     let status_winheight = winheight(a:info.status_bufnr)
-    if line('$') < winheight(a:info.status_bufnr)
-        execute 'resize' line('$')
+    if line('$') < status_winheight
+        execute 'resize' line('$') + 10
     endif
     return 1
 endfunction
