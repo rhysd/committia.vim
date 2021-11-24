@@ -110,6 +110,10 @@ Vim command which opens a diff window in single-column mode.
 
 If committia.vim is in multi-columns mode, specifies the width of the edit window.
 
+### `g:committia_status_window_min_height` (default: `0`)
+
+Minimum height of a status window.
+
 ## Future
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
