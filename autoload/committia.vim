@@ -7,6 +7,7 @@ let g:committia_edit_window_width = get(g:, 'committia_edit_window_width', 80)
 let g:committia_diff_window_opencmd = get(g:, 'committia_diff_window_opencmd', 'botright vsplit')
 let g:committia_status_window_opencmd = get(g:, 'committia_status_window_opencmd', 'belowright split')
 let g:committia_singlecolumn_diff_window_opencmd = get(g:, 'committia_singlecolumn_diff_window_opencmd', 'belowright split')
+let g:committia_status_window_min_height = get(g:, 'committia_status_window_min_height', 0)
 let g:committia_hooks = get(g:, 'committia_hooks', {})
 let g:committia_diff_window_filetype = get(g:, 'committia_diff_window_filetype', '')
 
@@ -14,14 +15,14 @@ inoremap <silent> <Plug>(committia-scroll-diff-down-half) <C-o>:call committia#s
 inoremap <silent> <Plug>(committia-scroll-diff-up-half) <C-o>:call committia#scroll_window('diff', 'C-u')<CR>
 inoremap <silent> <Plug>(committia-scroll-diff-down-page) <C-o>:call committia#scroll_window('diff', 'C-f')<CR>
 inoremap <silent> <Plug>(committia-scroll-diff-up-page) <C-o>:call committia#scroll_window('diff', 'C-b')<CR>
-inoremap <silent> <Plug>(committia-scroll-diff-down) <C-o>:call committia#scroll_window('diff', 'j')<CR>
-inoremap <silent> <Plug>(committia-scroll-diff-up) <C-o>:call committia#scroll_window('diff', 'k')<CR>
+inoremap <silent> <Plug>(committia-scroll-diff-down) <C-o>:call committia#scroll_window('diff', 'C-e')<CR>
+inoremap <silent> <Plug>(committia-scroll-diff-up) <C-o>:call committia#scroll_window('diff', 'C-y')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-down-half) :<C-u>call committia#scroll_window('diff', 'C-d')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-up-half) :<C-u>call committia#scroll_window('diff', 'C-u')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-down-page) :<C-u>call committia#scroll_window('diff', 'C-f')<CR>
 nnoremap <silent> <Plug>(committia-scroll-diff-up-page) :<C-u>call committia#scroll_window('diff', 'C-b')<CR>
-nnoremap <silent> <Plug>(committia-scroll-diff-down) :<C-u>call committia#scroll_window('diff', 'j')<CR>
-nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_window('diff', 'k')<CR>
+nnoremap <silent> <Plug>(committia-scroll-diff-down) :<C-u>call committia#scroll_window('diff', 'C-e')<CR>
+nnoremap <silent> <Plug>(committia-scroll-diff-up) :<C-u>call committia#scroll_window('diff', 'C-y')<CR>
 
 let s:current_info = {}
 
@@ -64,8 +65,11 @@ endfunction
 function! s:open_status_window(vcs, info) abort
     call s:open_window(a:vcs, 'status', a:info, 'gitcommit')
     let status_winheight = winheight(a:info.status_bufnr)
-    if line('$') < winheight(a:info.status_bufnr)
-        execute 'resize' line('$')
+    let buf_height = line('$')
+    let height = g:committia_status_window_min_height > buf_height ?
+                    \ g:committia_status_window_min_height : buf_height
+    if height < status_winheight
+        execute 'resize' height
     endif
     return 1
 endfunction
@@ -111,6 +115,9 @@ function! s:callback_on_window_closed_workaround() abort
 endfunction
 
 function! s:get_map_of(cmd) abort
+    if stridx(a:cmd, '-') == -1
+        return a:cmd
+    endif
     return eval('"\<' . a:cmd . '>"')
 endfunction
 

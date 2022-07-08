@@ -73,6 +73,8 @@ Mappings to scroll diff window for insert mode are available.
 | `<Plug>(committia-scroll-diff-up-half)`   | Scroll up the diff window by half a screen.   |
 | `<Plug>(committia-scroll-diff-down-page)` | Scroll down the diff window by a screen.      |
 | `<Plug>(committia-scroll-diff-up-page)`   | Scroll up the diff window by a screen.        |
+| `<Plug>(committia-scroll-diff-down)`      | Scroll down the diff window by one line.      |
+| `<Plug>(committia-scroll-diff-up)`        | Scroll up the diff window by one line.        |
 
 ## Variables
 
@@ -107,6 +109,10 @@ Vim command which opens a diff window in single-column mode.
 ### `g:committia_edit_window_width` (default: `80`)
 
 If committia.vim is in multi-columns mode, specifies the width of the edit window.
+
+### `g:committia_status_window_min_height` (default: `0`)
+
+Minimum height of a status window.
 
 ## Future
 

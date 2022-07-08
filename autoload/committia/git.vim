@@ -110,10 +110,14 @@ function! s:search_git_dir_and_work_tree() abort
 endfunction
 
 function! s:execute_git(cmd) abort
+    let l:shellslash = &shellslash
     try
+        set shellslash
         let [git_dir, work_tree] = s:search_git_dir_and_work_tree()
     catch
         throw 'committia: git: Failed to retrieve git-dir or work-tree: ' . v:exception
+    finally
+        let &shellslash = l:shellslash
     endtry
 
     if git_dir ==# '' || work_tree ==# ''
