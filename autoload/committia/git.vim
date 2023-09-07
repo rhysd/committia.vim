@@ -155,7 +155,7 @@ function! s:ensure_index_file(git_dir) abort
 endfunction
 
 function! s:unset_index_file() abort
-    let $GIT_INDEX_FILE = ''
+    unlet $GIT_INDEX_FILE
 endfunction
 
 function! committia#git#diff() abort
