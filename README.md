@@ -114,6 +114,10 @@ If committia.vim is in multi-columns mode, specifies the width of the edit windo
 
 Minimum height of a status window.
 
+### `g:committia_status_window_max_height` (default: `-1`)
+
+If non-negative, the maximum height of the status window.
+
 ## Future
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).

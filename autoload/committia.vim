@@ -8,6 +8,7 @@ let g:committia_diff_window_opencmd = get(g:, 'committia_diff_window_opencmd', '
 let g:committia_status_window_opencmd = get(g:, 'committia_status_window_opencmd', 'belowright split')
 let g:committia_singlecolumn_diff_window_opencmd = get(g:, 'committia_singlecolumn_diff_window_opencmd', 'belowright split')
 let g:committia_status_window_min_height = get(g:, 'committia_status_window_min_height', 0)
+let g:committia_status_window_max_height = get(g:, 'committia_status_window_max_height', -1)
 let g:committia_hooks = get(g:, 'committia_hooks', {})
 
 inoremap <silent> <Plug>(committia-scroll-diff-down-half) <C-o>:call committia#scroll_window('diff', 'C-d')<CR>
@@ -59,7 +60,10 @@ function! s:open_status_window(vcs, info) abort
     let buf_height = line('$')
     let height = g:committia_status_window_min_height > buf_height ?
                     \ g:committia_status_window_min_height : buf_height
-    if height < status_winheight
+    if g:committia_status_window_max_height >= 0
+        let height = min([height, g:committia_status_window_max_height])
+    endif
+    if height != status_winheight
         execute 'resize' height
     endif
     return 1
