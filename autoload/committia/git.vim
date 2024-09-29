@@ -14,6 +14,10 @@ let g:committia#git#cmd = get(g:, 'committia#git#cmd', 'git')
 let g:committia#git#diff_cmd = get(g:, 'committia#git#diff_cmd', 'diff -u --cached --no-color --no-ext-diff')
 let g:committia#git#status_cmd = get(g:, 'committia#git#status_cmd', '-c color.status=false status -b')
 
+" Experimental: extract diff and status from commit message template when
+" using git commit --verbose, particularly useful when amending commits
+let g:committia#git#use_verbose = get(g:, 'committia#git#use_verbose', 0)
+
 try
     silent call vimproc#version()
 
@@ -159,12 +163,21 @@ function! s:unset_index_file() abort
 endfunction
 
 function! committia#git#diff() abort
+    if g:committia#git#use_verbose
+        let line = s:diff_start_line()
+        if line > 0
+            return getline(line, '$')
+        endif
+    endif
+
     let diff = s:execute_git(g:committia#git#diff_cmd)
 
     if diff !=# ''
         return split(diff, '\n')
     endif
 
+    " FIXME: leads to inaccurate status with git commit --amend --verbose
+    " Extracted diff shows existing changes, but status will show no changes
     let line = s:diff_start_line()
     if line == 0
         return ['']
@@ -174,6 +187,7 @@ function! committia#git#diff() abort
 endfunction
 
 function! s:diff_start_line() abort
+    " FIXME: allow for other git comment character (# is just the default)
     let re_start_diff_line = '# -\+ >8 -\+\n\%(#.*\n\)\+diff --git'
     return search(re_start_diff_line, 'cenW')
 endfunction
@@ -185,6 +199,15 @@ function! committia#git#status() abort
         " Leave status window empty when git-dir or work-tree not found
         return ''
     endtry
+    if g:committia#git#use_verbose
+        " localisation hack, find the start of the status in the commit
+        " message template using the first line of output from `git status`
+        let status_start = search(split(status, '\n')[0], 'cenW')
+        let status_end = s:diff_start_line()
+        if status_start > 0 && status_end > 0
+            return getline(status_start, status_end-1)
+        endif
+    endif
     return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
 endfunction
 
