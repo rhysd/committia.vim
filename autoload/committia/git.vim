@@ -187,8 +187,7 @@ function! committia#git#diff() abort
 endfunction
 
 function! s:diff_start_line() abort
-    " FIXME: allow for other git comment character (# is just the default)
-    let re_start_diff_line = '# -\+ >8 -\+\n\%(#.*\n\)\+diff --git'
+    let re_start_diff_line = '^[#;@!$%^&|:] -\+ >8 -\+\n\%([#;@!$%^&|:].*\n\)\+diff --git'
     return search(re_start_diff_line, 'cenW')
 endfunction
 
