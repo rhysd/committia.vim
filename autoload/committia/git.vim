@@ -176,12 +176,15 @@ function! committia#git#diff() abort
         return split(diff, '\n')
     endif
 
-    " FIXME: leads to inaccurate status with git commit --amend --verbose
-    " Extracted diff shows existing changes, but status will show no changes
     let line = s:diff_start_line()
     if line == 0
         return ['']
     endif
+
+    " Fugly hack to tell committia#git#status() to get the status from the
+    " commit message template too, otherwise status may not match with diff
+    " Could be removed if g:committia#git#use_verbose was enabled by default
+    let s:use_verbose_status = 1
 
     return getline(line, '$')
 endfunction
@@ -198,7 +201,8 @@ function! committia#git#status() abort
         " Leave status window empty when git-dir or work-tree not found
         return ''
     endtry
-    if g:committia#git#use_verbose
+    if g:committia#git#use_verbose || exists('s:use_verbose_status')
+        if exists('s:use_verbose_status') | unlet s:use_verbose_status | end
         " localisation hack, find the start of the status in the commit
         " message template using the first line of output from `git status`
         let status_start = search(split(status, '\n')[0], 'cenW')
