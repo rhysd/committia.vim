@@ -202,7 +202,7 @@ function! committia#git#status() abort
         " localisation hack, find the start of the status in the commit
         " message template using the first line of output from `git status`
         let status_start = search(split(status, '\n')[0], 'cenW')
-        let status_end = s:diff_start_line()
+        let status_end = search('^[#;@!$%^&|:] -\+ >8 -\+\n', 'cenW')
         if status_start > 0 && status_end > 0
             return getline(status_start, status_end-1)
         endif
