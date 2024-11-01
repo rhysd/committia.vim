@@ -235,8 +235,9 @@ function! committia#git#end_of_edit_region_line() abort
         " Only the comment block will be removed from edit buffer. (#41)
         let line = line('$') + 1
     endif
+    let commentChar = getline(line - 1)[0]
     while line > 1
-        if match(getline(line - 1), '^[#;@!$%^&|:]') == -1
+        if match(getline(line - 1), '^'.commentChar) == -1
             break
         endif
         let line -= 1
