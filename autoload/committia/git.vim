@@ -194,6 +194,18 @@ function! s:diff_start_line() abort
     return search(re_start_diff_line, 'cenW')
 endfunction
 
+function! s:comment_char() abort
+    let line = s:diff_start_line()
+    if line == 0
+        let line = line('$') + 1
+    endif
+    if match(getline(line - 1), '^[#;@!$%^&|:]') == 0
+        return getline(line - 1)[0]
+    else
+        return '#'
+    endif
+endfunction
+
 function! committia#git#status() abort
     try
         let status = s:execute_git(g:committia#git#status_cmd)
@@ -224,7 +236,7 @@ function! committia#git#status() abort
             endif
         endif
     endif
-    return map(split(status, '\n'), 'substitute(v:val, "^", "# ", "g")')
+    return map(split(status, '\n'), 'substitute(v:val, "^", s:comment_char() . " ", "g")')
 endfunction
 
 function! committia#git#end_of_edit_region_line() abort
@@ -235,9 +247,8 @@ function! committia#git#end_of_edit_region_line() abort
         " Only the comment block will be removed from edit buffer. (#41)
         let line = line('$') + 1
     endif
-    let commentChar = getline(line - 1)[0]
     while line > 1
-        if match(getline(line - 1), '^'.commentChar) == -1
+        if match(getline(line - 1), '^' . s:comment_char() ) == -1
             break
         endif
         let line -= 1
