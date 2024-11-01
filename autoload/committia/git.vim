@@ -207,10 +207,16 @@ function! committia#git#status() abort
         end
         let scissors_line = search('^[#;@!$%^&|:] -\+ >8 -\+\n', 'cenW')
         if scissors_line > 0
+            " Save cursor position so we can restore it after searching
+            " backwards from the end of the status (i.e. scissors line)
+            " Search backwards to allow for non-default core.commentChar
+            let save_cursor = getcurpos()
+            call cursor(scissors_line, 1)
             " localisation hack, find the start of the status in the commit
             " message template using the first line of output from `git status`
-            let status_start = search('^[#;@!$%^&|:] ' . split(status, '\n')[0], 'benw')
-            if status_start > 0 && status_start < scissors_line
+            let status_start = search(split(status, '\n')[0], 'benW')
+            call setpos('.', save_cursor)
+            if status_start > 0
                 return getline(status_start, scissors_line-1)
             endif
         endif
