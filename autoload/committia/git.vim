@@ -199,7 +199,7 @@ function! s:comment_char() abort
     if line == 0
         let line = line('$') + 1
     endif
-    if match(getline(line - 1), '^[#;@!$%^&|:]') == 0
+    if getline(line - 1) =~# '^[#;@!$%^&|:]'
         return getline(line - 1)[0]
     else
         return '#'
@@ -226,7 +226,7 @@ function! committia#git#status() abort
             let status_start = scissors_line
             let re_status_start = '^[#;@!$%^&|:] ' . split(status, '\n')[0]
             while status_start > 1
-                if match(getline(status_start - 1), re_status_start) == 0
+                if getline(status_start - 1) =~# re_status_start
                     break
                 endif
                 let status_start -= 1
@@ -248,7 +248,7 @@ function! committia#git#end_of_edit_region_line() abort
         let line = line('$') + 1
     endif
     while line > 1
-        if match(getline(line - 1), '^' . s:comment_char() ) == -1
+        if getline(line - 1) !~# '^' . s:comment_char()
             break
         endif
         let line -= 1
