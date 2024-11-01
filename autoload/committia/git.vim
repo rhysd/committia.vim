@@ -233,7 +233,7 @@ function! committia#git#end_of_edit_region_line() abort
         let line = line('$') + 1
     endif
     while line > 1
-        if stridx(getline(line - 1), '#') != 0
+        if match(getline(line - 1), '^[#;@!$%^&|:]') == -1
             break
         endif
         let line -= 1
