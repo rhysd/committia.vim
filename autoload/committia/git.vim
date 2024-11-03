@@ -213,6 +213,7 @@ function! committia#git#status() abort
         " Leave status window empty when git-dir or work-tree not found
         return ''
     endtry
+
     if g:committia#git#use_verbose || exists('s:use_verbose_status')
         if exists('s:use_verbose_status')
             unlet s:use_verbose_status
@@ -223,10 +224,11 @@ function! committia#git#status() abort
             " message template using the first line of output from `git status`
             " Search backwards to avoid match in message, and start search at
             " scissors line to avoid potential match in diff, unlikely, but...
+            let comment_char = getline(scissors_line)[0]
+            let status_start_line = comment_char . ' ' . split(status, '\n')[0]
             let status_start = scissors_line
-            let re_status_start = '^[#;@!$%^&|:] ' . split(status, '\n')[0]
             while status_start > 1
-                if getline(status_start - 1) =~# re_status_start
+                if getline(status_start - 1) ==# status_start_line
                     break
                 endif
                 let status_start -= 1
@@ -236,7 +238,9 @@ function! committia#git#status() abort
             endif
         endif
     endif
-    return map(split(status, '\n'), 'substitute(v:val, "^", s:comment_char() . " ", "g")')
+
+    let prefix = (exists('l:comment_char') ? comment_char : s:comment_char()) . ' '
+    return map(split(status, '\n'), 'substitute(v:val, "^", prefix, "g")')
 endfunction
 
 function! committia#git#end_of_edit_region_line() abort
