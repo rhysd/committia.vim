@@ -1,21 +1,21 @@
 More Pleasant Editing on Commit Message
 =======================================
 
-When you type `git commit`, Vim starts and opens a commit buffer. This plugin improves
-the commit buffer.
+When you type `git commit`, Vim starts and opens a commit buffer. This plugin improves the commit
+buffer.
 
-committia.vim splits the buffer into 3 windows; edit window, status window and diff window.
-You no longer need to repeat moving to another window, scrolling and backing to the former
-position in order to see a long commit diff.
+committia.vim splits the buffer into 3 windows; edit window, status window and diff window. You no
+longer need to repeat moving to another window, scrolling and backing to the former position in
+order to see a long commit diff.
 
-If the width of Vim window is too narrow (160 characters by default), committia.vim falls back
-to single column mode, which has 2 windows; edit window and diff window.
+If the width of Vim window is too narrow (the threshold is 160 characters by default), committia.vim
+falls back to the single column mode, which has 2 windows; edit window and diff window.
 
-For wide window:
+For a wide window:
 
 ![double column mode](https://github.com/rhysd/ss/blob/master/committia.vim/main.jpg?raw=true)
 
-For narrow window:
+For a narrow window:
 
 ![single column mode](https://github.com/rhysd/ss/blob/master/committia.vim/narrow.jpg?raw=true)
 
@@ -116,21 +116,20 @@ Minimum height of a status window.
 
 ### `g:committia#git#use_verbose` (default: `0`)
 
-If the value is `1`, extract the diff and status from `COMMIT_EDITMSG` when the
-`verbose` option is used with `git commit`, e.g. `git commit --verbose` or `git
-config --global commit.verbose=true`.
+If the value is `1`, extract the diff and status from `COMMIT_EDITMSG` when the `verbose` option is
+used with `git commit`, e.g. `git commit --verbose` or `git config --global commit.verbose=true`.
 
-## Future
+## Future work
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
 - Add more VCS supports
 - Test all features
 
-## Contribution
+## Thanks to the contributions
 
 - [@uasi](https://github.com/uasi) : single column mode
 - [@anekos](https://github.com/uasi) : submodule and worktree support
-- [and more contributors who sent a patch](https://github.com/rhysd/committia.vim/graphs/contributors)
+- [and all other contributors who sent a patch](https://github.com/rhysd/committia.vim/graphs/contributors)
 
 ## License
 
