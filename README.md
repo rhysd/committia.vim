@@ -114,6 +114,12 @@ If committia.vim is in multi-columns mode, specifies the width of the edit windo
 
 Minimum height of a status window.
 
+### `g:committia#git#use_verbose` (default: `0`)
+
+If the value is `1`, extract the diff and status from `COMMIT_EDITMSG` when the
+`verbose` option is used with `git commit`, e.g. `git commit --verbose` or `git
+config --global commit.verbose=true`.
+
 ## Future
 
 - Cooperate with [vim-fugitive](https://github.com/tpope/vim-fugitive).
